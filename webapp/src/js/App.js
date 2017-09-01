@@ -50,7 +50,6 @@ export default class BasicApp extends Component {
             <Card label="Sample Webapp2" heading='Sample Heading2' description='Sample Description' thumbnail = 'http://www.sitebuilderreport.com/assets/facebook-stock-up-446fff24fb11820517c520c4a5a4c032.jpg'/>
             <Card label="Sample Webapp2" heading='Sample Heading2' description='Sample Description' thumbnail = 'http://www.somebodymarketing.com/wp-content/uploads/2013/05/Stock-Dock-House.jpg'/>
             <Card label="Sample Webapp2" heading='Sample Heading2' description='Sample Description' thumbnail = 'http://www.somebodymarketing.com/wp-content/uploads/2013/05/Stock-Dock-House.jpg'/>
-
           </Columns>
         </Section>
       </App>
