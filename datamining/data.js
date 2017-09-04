@@ -8,18 +8,30 @@ var INITIALIZE_DB = true;
 
 /**
  * Abbreviation of companies
+ * AAPL  | Apple
+ * AMZN  | Amazon
+ * HPE   | Hewlett Packard Enterprise
+ * IBM   | IBM
+ * DXC   | DXC Technology
+ * DVMT  | DELL 
+ * CSCO  | Cisco
+ * INTC  | Intel
+ * SMCI  | Super Micro
+ * GOOGL | Google
+ * 
  * @type {[*]}
  */
-var symbols = ["AAPL","HPE","IBM"];
+var symbols = ["AAPL","HPE","IBM","DXC","DVMT","CSCO","INTC",];
 
 var requestify = require('requestify');
 var mongo = require('mongodb').MongoClient;
 var assert = require('assert');
+var moment = require('moment');
 
 /**Standard URL to get the information
  *
 %#company#% -> Placeholder for the company symbol*/
-var standardURL =  "https://api.iextrading.com/1.0/stock/%#company#%/quote?filter=symbol,latestTime,latestPrice,latestVolume,change";
+var standardURL =  "https://api.iextrading.com/1.0/stock/%#company#%/quote?filter=symbol,latestTime,latestPrice,latestVolume,change,delayedPrice,delayedPriceTime";
 
 var iteration = 0;
 
@@ -126,15 +138,15 @@ function fetchData(urls)
  */
 function saveInDb(body)
 {
-	var today = new Date();
-	date = today.getFullYear() + "-" + today.getMonth() + "-" + today.getDay();
-	
-	
+	let date = moment().format('YYYY-MM-DD');
+
 	var value = {
 		"price":body.latestPrice,
 		"volume":body.latestVolume,
 		"change":body.change,
 		"time":body.latestTime,
+		"delayedPrice" : body.delayedPrice,
+		"delayedPriceTime" : body.delayedPriceTime,
 		date
 	}
 	
@@ -142,5 +154,4 @@ function saveInDb(body)
 	   db.collection(COLLECTION_NAME).updateOne({symbol:body.symbol},{$push:{"values":value}})
 	   db.close();
 	});
-	
 }

@@ -1,0 +1,37 @@
+import  {EventEmitter} from 'events';
+
+import dispatcher from '../dispatchers/dispatcher';
+
+class DataStore extends EventEmitter{
+  constructor(){
+    super();
+
+    this.companyData =  [];
+  }
+
+  getAll(){
+    return this.companyData;
+  }
+  handleActions(action){
+    console.log("Handler");
+    switch(action.type) {
+      case "FETCH_COMPANY_DATA":
+        this.fetchCompanyData(action.data);
+    }
+  }
+
+  fetchCompanyData(data){
+    console.log(data);
+    this.companyData.push(data);
+    this.emit('change');
+  }
+
+
+
+
+}
+
+const dataStore = new DataStore();
+dispatcher.register(dataStore.handleActions.bind(dataStore));
+
+export default dataStore;

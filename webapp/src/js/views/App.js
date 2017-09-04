@@ -10,8 +10,44 @@ import Box from 'grommet/components/Box';
 import Card from 'grommet/components/Card';
 import Columns from 'grommet/components/Columns';
 
+import DataStore from '../stores/DataStore';
+
+import * as DataActions from '../actions/DataActions';
+
+import Home from './Home';
 
 export default class BasicApp extends Component {
+
+  constructor(){
+    super();
+
+    this.state = {
+      values: this.getData()
+    }
+  }
+
+  componentWillMount(){
+
+    DataActions.fetchCompanyData('AAPL');
+    DataActions.fetchCompanyData('HPE');
+    DataActions.fetchCompanyData('IBM');
+
+    DataStore.on('change',()=>{
+      this.setState({
+        values: this.getData()
+      });
+      console.dir(this.state);
+    });
+  }
+  componentWillUnmount(){
+    DataStore.removeListener('change',this.getData());
+  }
+
+  getData(){
+    return DataStore.getAll();
+  }
+
+
 
 
   render() {
@@ -33,7 +69,7 @@ export default class BasicApp extends Component {
                   <Card heading='Heading'
                         description='Hero description text.'
                         label='label'
-                        link={<Anchor href='#'
+                        link={<Anchor href='/app'
                                       primary={true}
                                       label='Link' />} />
                 </Box>
@@ -43,15 +79,19 @@ export default class BasicApp extends Component {
           </Hero>
         </Section>
         <Section>
-
           <Columns masonry = {false}>
-            <Card label="Sample Webapp2" heading='Sample Heading2' description='Sample Description' thumbnail = 'http://www.somebodymarketing.com/wp-content/uploads/2013/05/Stock-Dock-House.jpg'/>
-            <Card label="Sample Webapp2" heading='Sample Heading2' description='Sample Description' thumbnail = 'http://upload.wikimedia.org/wikipedia/commons/thumb/0/05/C_Stock_at_Ladbroke_Grove_1.jpg/1280px-C_Stock_at_Ladbroke_Grove_1.jpg'/>
-            <Card label="Sample Webapp2" heading='Sample Heading2' description='Sample Description' thumbnail = 'http://www.sitebuilderreport.com/assets/facebook-stock-up-446fff24fb11820517c520c4a5a4c032.jpg'/>
-            <Card label="Sample Webapp2" heading='Sample Heading2' description='Sample Description' thumbnail = 'http://www.somebodymarketing.com/wp-content/uploads/2013/05/Stock-Dock-House.jpg'/>
-            <Card label="Sample Webapp2" heading='Sample Heading2' description='Sample Description' thumbnail = 'http://www.somebodymarketing.com/wp-content/uploads/2013/05/Stock-Dock-House.jpg'/>
+            {this.state.values.map((item,index)=>
+              <Card key={index}
+                    label={item?item.industry:""}
+                    heading={item?item.companyName:""}
+                    description={item?item.description:""}
+                    thumbnail = 'http://www.somebodymarketing.com/wp-content/uploads/2013/05/Stock-Dock-House.jpg'
+                    link ={
+                      <Anchor href='/app' primary={true} label='View Numbers' />
+                    }/>)}
           </Columns>
         </Section>
+        <Home name="Markus"/>
       </App>
     );
   }
