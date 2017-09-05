@@ -6,29 +6,33 @@ class DataStore extends EventEmitter{
   constructor(){
     super();
 
-    this.companyData =  [];
+    this.companyInformation =  [];
   }
 
-  getAll(){
+  getInformation(){
+    return this.companyInformation;
+  }
+  getData(){
     return this.companyData;
   }
   handleActions(action){
-    console.log("Handler");
     switch(action.type) {
-      case "FETCH_COMPANY_DATA":
+      case "FETCH_COMPANY_INFO":
+        this.fetchCompanyInfo(action.data);
+      case "FETCH_COMPANY_DATA" :
         this.fetchCompanyData(action.data);
+
     }
+  }
+  fetchCompanyInfo(data){
+    this.companyData = (data);
+    this.emit('info_changed');
   }
 
   fetchCompanyData(data){
-    console.log(data);
-    this.companyData.push(data);
-    this.emit('change');
+    this.companyData = (data);
+    this.emit('data_changed');
   }
-
-
-
-
 }
 
 const dataStore = new DataStore();

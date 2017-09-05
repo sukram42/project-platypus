@@ -21,31 +21,35 @@ function connectDB() {
   })
 }
 
+exports.getAll  = function(){
+   return find();
+}
+
 exports.getCompanyInformation = function (symbol) {
+  console.log("|" + symbol + "|");
+    return find({"symbol":symbol.toUpperCase()});
+}
+
+ exports.getCompanyInformationFromDate = function (symbol,date) {
+     return find({symbol,"values.date":date});
+ }
+function find(element)
+{
   return connectDB().then(db => {
-    let cursor = db.collection(COLLECTION_NAME).find({symbol});
+    let cursor = db.collection(COLLECTION_NAME).find(element);
     return getQueryObservable(cursor)
     db.close();
   }, (err) => console.log("ERROR ", err));
 }
 
- exports.getCompanyInformationFromDate = function (symbol,date) {
-   return connectDB().then(db => {
-     let cursor = db.collection(COLLECTION_NAME).find({symbol,"values.date":date});
-     return getQueryObservable(cursor)
-     db.close();
-   }, (err) => console.log("ERROR ", err));
- }
-
 function getQueryObservable(cursor)
 {
   return erg = Rx.Observable.create(observer => {
-    cursor.forEach(function (doc, err) {
-      if (doc != null) {
-        observer.next(doc);
-      } else {
-        observer.error(err);
-      }
+
+    cursor.toArray((err,doc)=>{
+        if(doc)
+          observer.next(doc);
+        else observer.error(err);
     });
   });
 }
