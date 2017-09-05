@@ -24,7 +24,8 @@ const loaderOptionsConfig = {
 };
 
 const devConfig = {};
-if (env === 'production') {
+//Disabled Uglify due to Errors concerning ES6 (original: "production")
+if (env === 'productions') {
   loaderOptionsConfig.minimize = true;
   plugins.push(
     new webpack.optimize.UglifyJsPlugin({
