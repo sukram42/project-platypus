@@ -21,7 +21,7 @@ router.get('/', (req, res) => {
 router.get('/companies', (req, res) => {
   console.log("Request on route /companies")
   model.getAll().then(promiseData => {
-    promiseData.subscribe(data =>{ console.log(data);res.send(data);}, err => res.send(err));
+    promiseData.subscribe(data =>{res.send(data);}, err => res.send(err));
   })
 });
 
