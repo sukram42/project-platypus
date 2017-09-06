@@ -13,6 +13,7 @@ import Header from 'grommet/components/Header';
 import Footer from 'grommet/components/Footer';
 import Menu from 'grommet/components/Menu';
 
+
 export default class SidebarComponent extends Component {
 
   render() {
@@ -21,9 +22,11 @@ export default class SidebarComponent extends Component {
                fixed={false}>
         <Header pad='medium'
                 justify='between'>
-          <Title>
-            Title
-          </Title>
+
+          <Anchor path={{ path: '/home', index: true }}>
+            <Title>Titel</Title>
+          </Anchor>
+
         </Header>
         <Box flex='grow'
              justify='start'>

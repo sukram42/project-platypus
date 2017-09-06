@@ -5,9 +5,11 @@ import Header from 'grommet/components/Header';
 import Section from 'grommet/components/Section';
 import Anchor from 'grommet/components/Anchor';
 import Card from 'grommet/components/Card';
-import Columns from 'grommet/components/Columns';
+import Tiles from 'grommet/components/Tiles';
+import Tile from 'grommet/components/Tile';
 import Image from 'grommet/components/Image';
 import Box from 'grommet/components/Box';
+import Spinning from 'grommet/components/icons/Spinning';
 
 import DataStore from '../stores/DataStore';
 
@@ -20,30 +22,30 @@ export default class IndexCompany extends Component {
   constructor() {
     super();
 
+    DataActions.fetchData();
+
+    this.getData = this.getData.bind(this);
     this.state = {
-      values: this.getData()
-    }
+      data: DataStore.getData()
+    };
   }
 
   componentWillMount() {
+    DataStore.on('data_changed', this.getData);
 
-
-
-    DataStore.on('change', () => {
-      this.setState({
-        values: this.getData()
-      });
-      console.dir(this.state);
-    });
   }
 
   componentWillUnmount() {
-    DataStore.removeListener('change', this.getData());
+    DataStore.removeListener('data_changed', this.getData);
   }
 
+
   getData() {
-    return DataStore.getInformation();
+    this.setState({
+      values: DataStore.getData()
+    });
   }
+
 
   render() {
     return (
@@ -65,17 +67,20 @@ export default class IndexCompany extends Component {
           />
         </Section>
         <Section>
-          <Columns masonry={false}>
-            {this.state.values.map((item, index) =>
-              <Card key={index}
-                    label={item ? item.industry : ""}
-                    heading={item ? item.companyName : ""}
-                    description={item ? item.description : ""}
-                    thumbnail='http://www.somebodymarketing.com/wp-content/uploads/2013/05/Stock-Dock-House.jpg'
-                    link={
-                      <Anchor path={{ path: '/app', index: true }} primary={true} label='View Numbers'/>
-                    }/>)}
-          </Columns>
+          <Tiles flush={false}
+                 fill={false}>
+            {this.state.values?this.state.values.map((item, index) =>
+              <Tile key={index}>
+                <Card key={index}
+                      label={item ? item.industry : ""}
+                      heading={item ? item.companyName : ""}
+                      description={item ? item.description : ""}
+                      thumbnail='http://www.somebodymarketing.com/wp-content/uploads/2013/05/Stock-Dock-House.jpg'
+                      link={
+                        <Anchor path={{path: '/app', index: true}} primary={true} label='View Numbers'/>
+                      }/>
+              </Tile>):<Spinning/>}
+          </Tiles>
         </Section>
       </Article>
     );

@@ -5,44 +5,44 @@ import React, {Component} from 'react';
 import DataStore from '../stores/DataStore';
 
 import Split from 'grommet/components/Split';
+import Tabs from 'grommet/components/Tabs';
+import Tab from 'grommet/components/Tab';
+import Spinning from 'grommet/components/icons/Spinning';
 
-import Tiles from 'grommet/components/Tiles';
-import Tile from 'grommet/components/Tile';
-import Card from 'grommet/components/Card';
 import * as DataActions from '../actions/DataActions';
 
 import SidebarComponent from "./sidebar.component";
+import CompanyTabComponent from "./companies.component/company-tab.component";
 
 export default class CompaniesComponent extends Component {
   constructor() {
     super();
 
-    DataActions.fetchData();
+    this.getData = this.getData.bind(this);
 
+    DataActions.startPolling();
 
-    this.getInformation = this.getInformation.bind(this);
     this.state = {
-      information: DataStore.getInformation(),
-      data : DataStore.getData()
+      values : DataStore.getData(),
+
     };
   }
 
-  componentWillMount() {
-    DataStore.on('info_changed', this.getInformation);
-    DataStore.on('data_changed', this.getData);
+  componentDidMount() {
+    DataActions.fetchData();
+  }
 
+  componentWillMount() {
+    DataStore.on('data_changed', this.getData);
+    DataActions.fetchData();
   }
 
   componentWillUnmount() {
-    DataStore.removeListener('info_change', this.getInformation);
-    DataStore.removeListener('data_change', this.getData);
+    DataStore.removeListener('data_changed', this.getData);
+    DataActions.stopPolling();
+
   }
 
-  getInformation() {
-    this.setState({
-      values: DataStore.getInformation()
-    });
-  }
 
   getData() {
     this.setState({
@@ -59,15 +59,13 @@ export default class CompaniesComponent extends Component {
 
         <SidebarComponent active={1}/>
 
-        <Tiles flush={false}
-               fill={false}>
-          <Tile>
-            <Card thumbnail='/img/carousel-1.png'
-                  heading='Sample Heading'
-                  label='Sample Label'
-                  description='Sample description providing more details.' />
-          </Tile>
-        </Tiles>
+        <Tabs>
+
+          {this.state.values?this.state.values.map((item,index)=>
+          <Tab title = {item.symbol} >
+             <CompanyTabComponent item={item} />
+          </Tab> ):<Spinning size="large"/> }
+        </Tabs>
       </Split>
 
     );
