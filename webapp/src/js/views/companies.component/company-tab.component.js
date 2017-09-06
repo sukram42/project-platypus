@@ -11,6 +11,7 @@ import Animate from 'grommet/components/Animate';
 
 import CompanyInformationTabComponent from './company-information-tab.component';
 import CompanyRawDataTabComponent from './company-rawdata-tab.component';
+import CompanyChartsTabComponent from './company-charts-tab.component';
 
 export default class CompanyTabComponent extends Component {
 
@@ -36,18 +37,10 @@ export default class CompanyTabComponent extends Component {
             </Animate>
           </AccordionPanel>
           <AccordionPanel heading='Charts'>
-            <Paragraph>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-              dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
-              ea commodo consequat.
-            </Paragraph>
+            <CompanyChartsTabComponent values={this.props.item.values}/>
           </AccordionPanel>
           <AccordionPanel heading='Raw Data'>
-            <Animate enter={{"animation": "slide-down", "duration": 800, "delay": 0}}
-                     leave={{"animation": "slide-up", "duration": 1000, "delay": 0}}
-                     keep={true}>
                <CompanyRawDataTabComponent values={this.props.item.values}/>
-            </Animate>
           </AccordionPanel>
         </Accordion>
       </Box>
