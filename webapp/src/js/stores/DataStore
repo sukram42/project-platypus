@@ -3,34 +3,37 @@ import  {EventEmitter} from 'events';
 import dispatcher from '../dispatchers/dispatcher';
 
 class DataStore extends EventEmitter{
+
+
+
   constructor(){
     super();
 
-    this.companyInformation =  [];
+    this.interval = null;
+    this.companyData =  [];
   }
 
-  getInformation(){
-    return this.companyInformation;
-  }
   getData(){
     return this.companyData;
   }
   handleActions(action){
     switch(action.type) {
-      case "FETCH_COMPANY_INFO":
-        this.fetchCompanyInfo(action.data);
       case "FETCH_COMPANY_DATA" :
         this.fetchCompanyData(action.data);
+      case "FETCH_COMPANY_ONE" :
+        this.fetchOneCompanyData(action.data);
 
     }
-  }
-  fetchCompanyInfo(data){
-    this.companyData = (data);
-    this.emit('info_changed');
   }
 
   fetchCompanyData(data){
     this.companyData = (data);
+    this.emit('data_changed');
+  }
+  fetchOneCompanyData(data){
+    this.companyData.forEach((item)=>{
+    });
+
     this.emit('data_changed');
   }
 }
