@@ -21,7 +21,7 @@ var INITIALIZE_DB = true;
  *
  * @type {[*]}
  */
-var symbols = ["AAPL", "HPE", "IBM", "DXC", "DVMT", "CSCO", "INTC","SAP","ORCL"];
+var symbols = ["AAPL", "HPE", "IBM", "DXC", "DVMT", "CSCO", "INTC", "SAP", "ORCL"];
 
 var requestify = require('requestify');
 var mongo = require('mongodb').MongoClient;
@@ -31,7 +31,7 @@ var moment = require('moment');
 /**Standard URL to get the information
  *
  %#company#% -> Placeholder for the company symbol*/
-var standardURL = "https://api.iextrading.com/1.0/stock/%#company#%/quote?filter=symbol,latestTime,latestPrice,latestVolume,change,delayedPrice,delayedPriceTime";
+var standardURL = "https://api.iextrading.com/1.0/stock/%#company#%/quote";//?filter=symbol,latestTime,latestPrice,latestVolume,change,delayedPrice,delayedPriceTime";
 
 var iteration = 0;
 
@@ -70,7 +70,7 @@ function createFields(db) {
         let obj = {symbol, value: []};
         getInformation(symbol)
             .then(info => {
-                db.collection(COLLECTION_NAME).insertOne(Object.assign(JSON.parse(info.body),obj));
+                db.collection(COLLECTION_NAME).insertOne(Object.assign(JSON.parse(info.body), obj));
             });
     });
 
@@ -127,9 +127,10 @@ function fetchData(urls) {
 
     urls.forEach(url => {
         requestify.get(url).then(response => {
-           if(response.getBody().latestPrice)
-            saveInDb(response.getBody());
-           else console.log("Exchange Closed");
+            if (response.getBody().latestPrice) {
+                saveInDb(response.getBody());
+            }
+            else console.log("Exchange Closed");
         });
     });
 }
@@ -146,6 +147,7 @@ function saveInDb(body) {
         "volume": body.latestVolume,
         "change": body.change,
         "time": body.latestTime,
+        "timestamp": moment().valueOf(),
         "delayedPrice": body.delayedPrice,
         "delayedPriceTime": body.delayedPriceTime,
         date

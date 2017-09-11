@@ -3,26 +3,45 @@ import  {EventEmitter} from 'events';
 import dispatcher from '../dispatchers/dispatcher';
 
 class DataStore extends EventEmitter{
-
-
-
   constructor(){
     super();
 
     this.interval = null;
     this.companyData =  [];
+    this.databaseData =  {
+      stats:{},
+      log:{},
+      buildInfo:{}
+    };
   }
 
   getData(){
     return this.companyData;
   }
+
+  getDatabaseData(){
+    return this.databaseData;
+  }
+
+  getDatabaseLog(){
+    return this.databaseData.log;
+  }
+
+
   handleActions(action){
     switch(action.type) {
       case "FETCH_COMPANY_DATA" :
         this.fetchCompanyData(action.data);
-      case "FETCH_COMPANY_ONE" :
-        this.fetchOneCompanyData(action.data);
-
+        break;
+      case "FETCH_DATABASE_LOG":
+        this.fetchDatabaseLog(action.data);
+        break;
+      case "FETCH_DATABASE_BUILDINFO":
+        this.fetchDatabaseBuildInfo(action.data);
+        break;
+      case "FETCH_DATABASE_STATS":
+        this.fetchDatabaseStats(action.data);
+        break;
     }
   }
 
@@ -30,12 +49,21 @@ class DataStore extends EventEmitter{
     this.companyData = (data);
     this.emit('data_changed');
   }
-  fetchOneCompanyData(data){
-    this.companyData.forEach((item)=>{
-    });
 
-    this.emit('data_changed');
-  }
+   fetchDatabaseLog(data){
+     this.databaseData.log = (data);
+     this.emit('database_log_changed');
+   }
+   fetchDatabaseBuildInfo(data){
+     this.databaseData.buildInfo = (data);
+     this.emit('database_changed');
+   }
+   fetchDatabaseStats(data){
+     this.databaseData.stats = (data);
+     this.emit('database_changed');
+   }
+
+
 }
 
 const dataStore = new DataStore();

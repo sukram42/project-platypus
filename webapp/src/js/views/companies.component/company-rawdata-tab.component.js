@@ -13,7 +13,6 @@ import Value from 'grommet/components/Value';
 import Multiple from 'grommet/components/icons/base/Multiple';
 import Timestamp from 'grommet/components/Timestamp';
 import NumberInput from 'grommet/components/NumberInput';
-import Tip from 'grommet/components/Tip';
 
 export default class CompanyRawDataTabComponent extends Component {
 
@@ -27,10 +26,7 @@ export default class CompanyRawDataTabComponent extends Component {
       elementCount: 50,
       elementDistance: 100
     };
-
-
   }
-
 
   componentWillMount() {
     this.getItemsReady(this.props);
@@ -66,19 +62,11 @@ export default class CompanyRawDataTabComponent extends Component {
                          this.setState({elementCount: number.target.value}, () => this.getItemsReady(this.props));
 
                        }}/>
-          <Tip target='count_changer' onClose={() => {
-          }}>
-            Choose the count of last values.
-          </Tip>
           <NumberInput id="dif_changer" defaultValue={+this.state.elementDistance + 1}
                        step={1}
                        onChange={(number) => {
                          this.setState({elementDistance: number.target.value}, () => this.getItemsReady(this.props));
                        }}/>
-          <Tip target='dif_changer' onClose={() => {
-          }}>
-            Choose the difference between the elements.
-          </Tip>
           <Box justify="center">
             <Value value={this.state.content ?this.state.itemLength:0}
                    icon={<Multiple />}
@@ -86,7 +74,7 @@ export default class CompanyRawDataTabComponent extends Component {
             />
           </Box>
         </Box>
-        <Table>
+        <Table responsive ={false}>
 
           <TableHeader labels={['', 'Time', 'Date', 'Price', 'Change', 'Volume', 'Delayed Price', 'Delayed Price Time']}
           />
@@ -97,7 +85,7 @@ export default class CompanyRawDataTabComponent extends Component {
                 {++index}
               </td>
               <td>
-                {item.time}
+                 <Timestamp value={new Date(item.timestamp)} fields={['time', 'seconds']}/>
               </td>
               <td>
                 {item.date}
@@ -111,7 +99,6 @@ export default class CompanyRawDataTabComponent extends Component {
               <td>
                 {item.volume}
               </td>
-
               <td>
                 {item.delayedPrice}
               </td>
@@ -123,7 +110,6 @@ export default class CompanyRawDataTabComponent extends Component {
           </tbody>
         </Table>
       </div>
-    )
-      ;
+    );
   }
 }

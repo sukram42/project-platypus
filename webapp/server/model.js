@@ -26,7 +26,6 @@ exports.getAll  = function(){
 }
 
 exports.getCompanyInformation = function (symbol) {
-  console.log("|" + symbol + "|");
     return find({"symbol":symbol.toUpperCase()});
 }
 

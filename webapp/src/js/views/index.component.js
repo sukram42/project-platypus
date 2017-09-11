@@ -3,13 +3,15 @@ import React, {Component} from 'react';
 import Article from 'grommet/components/Article';
 import Header from 'grommet/components/Header';
 import Section from 'grommet/components/Section';
-import Anchor from 'grommet/components/Anchor';
 import Card from 'grommet/components/Card';
-import Tiles from 'grommet/components/Tiles';
-import Tile from 'grommet/components/Tile';
-import Image from 'grommet/components/Image';
+import Search from 'grommet/components/Search';
+import Menu from 'grommet/components/Menu';
+import Title from 'grommet/components/Title';
+import Anchor from 'grommet/components/Anchor';
+
+
+import Headline from 'grommet/components/Headline';
 import Box from 'grommet/components/Box';
-import Spinning from 'grommet/components/icons/Spinning';
 
 import DataStore from '../stores/DataStore';
 
@@ -50,37 +52,64 @@ export default class IndexCompany extends Component {
   render() {
     return (
       <Article scrollStep={true}>
-        <Header fixed={true} size="small">
-          <Box pad="small" flex={true}
-               direction='row'>
-            <Image src="/img/hpe_logo.png" size="small" full="vertical"/>
-          </Box>
 
-        </Header>
-        <Section>
-          <HeaderHero image="/img/train.jpg"
-                      linkHref="/home"
-                      linkLabel="See the numbers"
-                      description="Sample Description"
-                      label="Sample Label"
-                      heading="Sample Heading"
-          />
+        <Section pad='large'
+                 justify='center'
+                 full='vertical'
+                 texture="img/big-ben.jpg"
+        >
+          <Box direction='row'>
+            <Box basis='1/4'
+                 align='start'
+                 pad='medium'>
+            </Box>
+            <Box colorIndex='grey-2-a' alignContent="start">
+              <Card heading='Heading'
+                    description='Hero description text.'
+                    label='label'
+                    link={<Anchor href='#'
+                                  primary={true}
+                                  label='Link'/>}/>
+            </Box>
+
+
+
+          </Box>
         </Section>
-        <Section>
-          <Tiles flush={false}
-                 fill={false}>
-            {this.state.values?this.state.values.map((item, index) =>
-              <Tile key={index}>
-                <Card key={index}
-                      label={item ? item.industry : ""}
-                      heading={item ? item.companyName : ""}
-                      description={item ? item.description : ""}
-                      thumbnail='http://www.somebodymarketing.com/wp-content/uploads/2013/05/Stock-Dock-House.jpg'
-                      link={
-                        <Anchor path={{path: '/app', index: true}} primary={true} label='View Numbers'/>
-                      }/>
-              </Tile>):<Spinning/>}
-          </Tiles>
+
+        <Section pad='large'
+                 justify='center'
+                 align='center'
+                 full='vertical'
+                 colorIndex='grey-4'>
+          <Headline margin='none'>
+            Section 2
+          </Headline>
+        </Section>
+        <Section pad='large'
+                 justify='center'
+                 align='center'
+                 full='vertical'>
+          <Headline margin='none'>
+            Section 3
+          </Headline>
+        </Section>
+        <Section pad='large'
+                 justify='center'
+                 align='center'
+                 full='vertical'
+                 colorIndex='grey-4'>
+          <Headline margin='none'>
+            Section 4
+          </Headline>
+        </Section>
+        <Section pad='large'
+                 justify='center'
+                 align='center'
+                 full='vertical'>
+          <Headline margin='none'>
+            Section 5
+          </Headline>
         </Section>
       </Article>
     );

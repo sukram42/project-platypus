@@ -27,7 +27,7 @@ export default class CompanyTabComponent extends Component {
         <Heading tag="h3">
           {this.props.item.industry}
         </Heading>
-        <Accordion>
+        <Accordion active={0}>
           <AccordionPanel heading='Information'>
             <Animate enter={{"animation": "slide-down", "duration": 800, "delay": 0}}
                      leave={{"animation": "slide-up", "duration": 1000, "delay": 0}}

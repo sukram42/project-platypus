@@ -4,7 +4,41 @@
 
 const express = require('express');
 const router = express.Router();
+
 const model = require('./model');
+const database = require('./database');
+
+/**
+ *  GET | GET DatabaseLog
+ */
+router.get('/database/log',(req,res)=>
+{
+  database.getLog().then(
+    (data)=>res.status(200).send(data)
+    ,(err)=>res.status(500).send(err));
+});
+
+/**
+ *  GET | GET DatabaseLog
+ */
+router.get('/database/buildinfo',(req,res)=>
+{
+
+  database.getBuildInfo().then(
+    (data)=>res.status(200).send(data)
+    ,(err)=>res.status(500).send(err));
+});
+
+/**
+ *  GET | GET DatabaseLog
+ */
+router.get('/database/stats',(req,res)=>
+{
+  console.log("Request on route /database/stats")
+  database.getStats().then(
+    (data)=>res.status(200).send(data)
+    ,(err)=>res.status(500).send(err));
+});
 
 
 /**
@@ -12,16 +46,16 @@ const model = require('./model');
  */
 router.get('/', (req, res) => {
   console.log("Request on route /")
-  res.send('api works');
+  res.status(200).send('api works');
 });
 
 /**
  *  GET | COMPANIES
  */
 router.get('/companies', (req, res) => {
-  console.log("Request on route /companies")
+  console.log("Request on route /companies");
   model.getAll().then(promiseData => {
-    promiseData.subscribe(data =>{res.send(data);}, err => res.send(err));
+    promiseData.subscribe(data =>{res.status(200).send(data);}, err => res.status(500).send(err));
   })
 });
 
@@ -39,7 +73,7 @@ router.get('/:companyId', (req, res) => {
 /**
  *  GET | COMPANY DATA AT DATE
  */
-router.get('/:companyId/:date', (req, res) => {
+router.get('/find/:companyId/:date', (req, res) => {
   console.log("Request on route /:companyId/:date")
   model.getCompanyInformationFromDate(req.params.companyId, req.params.date).then(promiseData => {
     promiseData.subscribe(data => {
@@ -47,6 +81,7 @@ router.get('/:companyId/:date', (req, res) => {
       }, err => res.send(err))
   });
 });
+
 
 
 module.exports = router;

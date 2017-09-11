@@ -18,9 +18,11 @@ ReactDOM.render(
       <Route path="/home" component={HomeComponent}/>
       <Route path="/database" component={DatabaseComponent}/>
       <Route path="/server" component={ServerComponent}/>
-      <Route path="/companies" component={CompaniesComponent}/>
+      <Route exact path="/companies" component={CompaniesComponent}/>
+      <Route path="/companies/:symbol" component={CompaniesComponent}/>
       <Route path="/" component={Index}/>
     </Switch>
   </BrowserRouter>, element);
 
 document.body.classList.remove('loading');
+//

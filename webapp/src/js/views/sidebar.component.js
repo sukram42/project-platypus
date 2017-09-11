@@ -12,6 +12,7 @@ import Title from 'grommet/components/Title';
 import Header from 'grommet/components/Header';
 import Footer from 'grommet/components/Footer';
 import Menu from 'grommet/components/Menu';
+import Image from 'grommet/components/Image';
 
 
 export default class SidebarComponent extends Component {
@@ -24,7 +25,9 @@ export default class SidebarComponent extends Component {
                 justify='between'>
 
           <Anchor path={{ path: '/home', index: true }}>
-            <Title>Titel</Title>
+            <Title>
+              <Image src="/img/hpe_logo.png" size="small" full="vertical"/>
+            </Title>
           </Anchor>
 
         </Header>

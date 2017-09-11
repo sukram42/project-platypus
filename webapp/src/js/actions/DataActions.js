@@ -8,7 +8,6 @@ import axios from 'axios';
 export const POLLING_TIME= 10000;
 
 export function fetchCompanyData(symbol) {
-  console.log("Action aufgerufen");
   axios.get('https://api.iextrading.com/1.0/stock/' + symbol + '/company')
     .then(response=>{
       dispatcher.dispatch({
@@ -30,6 +29,56 @@ export function fetchData()
     });
 }
 
+export function fetchDatabaseStats()
+{
+  //TODO Port ändern
+  axios.get('http://localhost:3001/api/database/stats')
+    .then(response=>{
+      dispatcher.dispatch({
+        "type":'FETCH_DATABASE_STATS',
+        "data": response.data
+      })
+    });
+}
+export function fetchDatabaseLog()
+{
+  //TODO Port ändern
+  axios.get('http://localhost:3001/api/database/log')
+    .then(response=>{
+      dispatcher.dispatch({
+        "type":'FETCH_DATABASE_LOG',
+        "data": response.data
+      })
+    });
+}
+export function fetchDatabaseBuildInfo()
+{
+  //TODO Port ändern
+  axios.get('http://localhost:3001/api/database/buildInfo')
+    .then(response=>{
+      dispatcher.dispatch({
+        "type":'FETCH_DATABASE_BUILDINFO',
+        "data": response.data
+      })
+    });
+}
+
+export function startPollingLog()
+{
+  if(!this.logInterval) {
+    this.logInterval = setInterval(() => {
+      fetchDatabaseLog();
+    }, POLLING_TIME);
+  }
+}
+export function stopPollingLog()
+{
+  if(this.logInterval){
+    clearInterval(this.interval);
+  }
+}
+
+
 export function startPolling()
 {
   if(!this.interval) {
@@ -45,9 +94,9 @@ export function stopPolling()
   }
 }
 
+
 export function startPollingCompany(symbol)
 {
-  console.log("SYMBOL",symbol);
   if(!this.interval) {
     this.companyInterval[symbol] = setInterval(() => {
       fetchCompanyData();

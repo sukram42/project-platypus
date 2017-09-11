@@ -18,18 +18,21 @@ export default class CompaniesComponent extends Component {
   constructor() {
     super();
 
+
     this.getData = this.getData.bind(this);
 
     DataActions.startPolling();
 
-    this.state = {
-      values : DataStore.getData(),
 
+
+    this.state = {
+      values : DataStore.getData()
     };
   }
 
   componentDidMount() {
     DataActions.fetchData();
+    console.log(this.props.match.params.symbol);
   }
 
   componentWillMount() {
@@ -40,9 +43,7 @@ export default class CompaniesComponent extends Component {
   componentWillUnmount() {
     DataStore.removeListener('data_changed', this.getData);
     DataActions.stopPolling();
-
   }
-
 
   getData() {
     this.setState({
@@ -52,6 +53,7 @@ export default class CompaniesComponent extends Component {
 
 
   render() {
+    let props = this.props.match.params.symbol;
     return (
       <Split fixed={true}
              flex='right'
@@ -59,10 +61,10 @@ export default class CompaniesComponent extends Component {
 
         <SidebarComponent active={1}/>
 
-        <Tabs>
+        <Tabs activeIndex={this.state.activeIndex!=null? this.state.activeIndex:+props} onActive ={(activeIndex)=>this.setState({activeIndex:activeIndex})}>
 
           {this.state.values?this.state.values.map((item,index)=>
-          <Tab title = {item.symbol} >
+          <Tab key={index} title = {item.symbol}  >
              <CompanyTabComponent item={item} />
           </Tab> ):<Spinning size="large"/> }
         </Tabs>
