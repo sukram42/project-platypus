@@ -17,7 +17,6 @@ import DataStore from '../stores/DataStore';
 
 import * as DataActions from '../actions/DataActions';
 
-import HeaderHero from "./header-hero.component";
 
 export default class IndexCompany extends Component {
 

@@ -21,19 +21,22 @@ function connectDB() {
   })
 }
 
-exports.getAll  = function(){
-   return find();
+exports.getAll = function () {
+  return find();
 }
 
 exports.getCompanyInformation = function (symbol) {
-    return find({"symbol":symbol.toUpperCase()});
+  return find({"symbol": symbol.toUpperCase()});
 }
 
- exports.getCompanyInformationFromDate = function (symbol,date) {
-     return find({symbol,"values.date":date});
- }
-function find(element)
-{
+exports.getCompanyInformationFromDate = function (symbol, date) {
+  return find({symbol, "values.date": date});
+}
+exports.getCompanyDataFromDate = function (symbol, fromDate, toDate) {
+  return find({symbol, "values":{$elemMatch:{"timestamp":{$gte:fromDate, $lte:toDate}}}});
+}
+
+function find(element) {
   return connectDB().then(db => {
     let cursor = db.collection(COLLECTION_NAME).find(element);
     return getQueryObservable(cursor)
@@ -41,14 +44,13 @@ function find(element)
   }, (err) => console.log("ERROR ", err));
 }
 
-function getQueryObservable(cursor)
-{
+function getQueryObservable(cursor) {
   return erg = Rx.Observable.create(observer => {
 
-    cursor.toArray((err,doc)=>{
-        if(doc)
-          observer.next(doc);
-        else observer.error(err);
+    cursor.toArray((err, doc) => {
+      if (doc)
+        observer.next(doc);
+      else observer.error(err);
     });
   });
 }

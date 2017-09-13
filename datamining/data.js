@@ -74,6 +74,8 @@ function createFields(db) {
             });
     });
 
+    db.collection(COLLECTION_NAME).createIndex({symbol:1,"values.timestamp":1,"values.date":1}, (err, result)=>console.log(result));
+
 
     console.log("Initialization finished");
     console.log("_________________________________________________________")
@@ -147,7 +149,7 @@ function saveInDb(body) {
         "volume": body.latestVolume,
         "change": body.change,
         "time": body.latestTime,
-        "timestamp": moment().valueOf(),
+        "timestamp": moment().toDate(),
         "delayedPrice": body.delayedPrice,
         "delayedPriceTime": body.delayedPriceTime,
         date

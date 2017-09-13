@@ -23,7 +23,6 @@ router.get('/database/log',(req,res)=>
  */
 router.get('/database/buildinfo',(req,res)=>
 {
-
   database.getBuildInfo().then(
     (data)=>res.status(200).send(data)
     ,(err)=>res.status(500).send(err));
@@ -34,7 +33,7 @@ router.get('/database/buildinfo',(req,res)=>
  */
 router.get('/database/stats',(req,res)=>
 {
-  console.log("Request on route /database/stats")
+  console.log("Request on route /database/stats");
   database.getStats().then(
     (data)=>res.status(200).send(data)
     ,(err)=>res.status(500).send(err));
@@ -45,7 +44,7 @@ router.get('/database/stats',(req,res)=>
  *  GET | TESTS API
  */
 router.get('/', (req, res) => {
-  console.log("Request on route /")
+  console.log("Request on route /");
   res.status(200).send('api works');
 });
 
@@ -56,7 +55,7 @@ router.get('/companies', (req, res) => {
   console.log("Request on route /companies");
   model.getAll().then(promiseData => {
     promiseData.subscribe(data =>{res.status(200).send(data);}, err => res.status(500).send(err));
-  })
+  });
 });
 
 /**
@@ -65,23 +64,19 @@ router.get('/companies', (req, res) => {
 router.get('/:companyId', (req, res) => {
 
   console.log("Request on route /:companyId");
-  model.getCompanyInformation(req.params.companyId).then(promiseData => {
-    promiseData.subscribe(data =>res.send(data), err => res.send(err));
-  })
-});
 
-/**
- *  GET | COMPANY DATA AT DATE
- */
-router.get('/find/:companyId/:date', (req, res) => {
-  console.log("Request on route /:companyId/:date")
-  model.getCompanyInformationFromDate(req.params.companyId, req.params.date).then(promiseData => {
-    promiseData.subscribe(data => {
-        res.send(data);
-      }, err => res.send(err))
-  });
-});
+  let from = new Date(req.query.from), to = new Date(req.query.to);
 
+  if(from && to){
+    console.log(req.query);
+    model.getCompanyDataFromDate(req.params.companyId,new Date(from),new Date(to))
+      .then(promiseData => {promiseData.subscribe(data => res.send(data), err => res.send(err))});
+  }else {
+    model.getCompanyInformation(req.params.companyId).then(promiseData => {
+      promiseData.subscribe(data => res.send(data), err => res.send(err));
+    });
+  }
+});
 
 
 module.exports = router;
