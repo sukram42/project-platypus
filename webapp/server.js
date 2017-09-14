@@ -5,6 +5,9 @@ const path = require('path');
 const http = require('http');
 const bodyParser = require('body-parser');
 
+var env = process.env.NODE_ENV || 'development';
+const config = require('../config')[env];
+
 const api = require('./server/api');
 
 // Parsers for POST data
@@ -14,7 +17,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // Point static path to dist
 app.use(express.static(path.join(__dirname, 'dist')));
 
-const port = process.env.PORT || '3000';
+const port = process.env.PORT || config.server.port|| '3000';
 app.set('port', port);
 
 // Set API routes

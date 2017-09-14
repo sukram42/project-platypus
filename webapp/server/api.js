@@ -59,13 +59,20 @@ router.get('/companies', (req, res) => {
 });
 
 /**
+ *  GET | COMPANY NAMES
+ */
+router.get('/companies/names', (req, res) => {
+  console.log("Request on route /companies/names");
+  model.getCompanyNames().then((data) => res.send(data), (err) => res.send(err));
+});
+
+/**
  *  GET | COMPANY DATA
  */
-router.get('/:companyId', (req, res) => {
-
+router.get('/companies/:companyId', (req, res) => {
   console.log("Request on route /:companyId");
-
-  model.getCompanyInformation(req.params.companyId).then((data) => res.send(data), (err) => res.send(err));
+  let company = req.params.companyId.toUpperCase();
+  model.getCompanyInformation(company).then((data) => res.send(data), (err) => res.send(err));
 });
 
 

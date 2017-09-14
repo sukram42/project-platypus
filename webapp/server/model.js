@@ -7,11 +7,55 @@
 
 const Rx = require('rxjs/Rx');
 const Vertica = require('vertica');
-var env = process.env.NODE_ENV || 'development';
+
 var SqlString = require('sqlstring');
+var env = process.env.NODE_ENV || 'development';
 const config = require('../../config')[env];
 var exports = module.exports = {};
 
+exports.getAll = function () {
+  let query = "SELECT * FROM " + config.database.maintable;
+  return get(query);
+}
+
+exports.getCompanyInformation = function (symbol) {
+  if (symbol) {
+    let query = "SELECT * FROM " + config.database.maintable + " WHERE symbol = " + SqlString.escape(symbol);
+    return get(query, true);
+  } else return null;
+}
+
+exports.getCompanyInformationFromDate = function (symbol, date) {
+
+  //return find({symbol, "values.date": date});
+}
+exports.getCompanyDataFromDate = function (symbol, fromDate, toDate) {
+  // return find({symbol, "values":{$elemMatch:{"timestamp":{$gte:fromDate, $lte:toDate}}}});
+}
+
+exports.getCompanyNames = function (){
+  query = "SELECT symbol from " + config.database.maintable + " GROUP BY symbol";
+  return get(query).then((data)=>{
+    let erg = [];
+    data.rows.map(item =>erg.push(item[0]));
+    return erg;
+  });
+}
+
+/**
+ * Get Data from Database
+ * @param query   SQL Query
+ * @param asJSON  Boolean, if it should be wrapped as an JSON
+ * @returns {Promise.<TResult>}
+ */
+function get(query, asJSON) {
+  return new Promise((resolve, reject) => {
+    connectDatabase().query(query, (err, result) => err ? reject(err) : resolve(result));
+  }).then(
+    (result) => {
+      return asJSON ? (jsonfy(result)) : result;
+    });
+}
 
 /**
  *
@@ -29,7 +73,7 @@ function connectDatabase() {
 }
 
 /**
- *
+ * Converts the Database Data into JSON
  * @param result
  * @returns {Array}
  */
@@ -49,37 +93,3 @@ function jsonfy(result) {
   });
   return ergArray;
 }
-
-
-exports.getAll = function () {
-  let query = "SELECT * FROM " + config.database.maintable;
-  return get(query);
-}
-
-exports.getCompanyInformation = function (symbol) {
-  if (symbol) {
-    let query = "SELECT * FROM " + config.database.maintable + " WHERE symbol = " + SqlString.escape(symbol);
-    return get(query);
-  } else return null;
-}
-
-exports.getCompanyInformationFromDate = function (symbol, date) {
-
-  //return find({symbol, "values.date": date});
-}
-
-exports.getCompanyDataFromDate = function (symbol, fromDate, toDate) {
-  // return find({symbol, "values":{$elemMatch:{"timestamp":{$gte:fromDate, $lte:toDate}}}});
-}
-
-function get(query) {
-  return new Promise((resolve, reject) => {
-    connectDatabase().query(query, (err, result) => err ? reject(err) : resolve(result));
-  }).then(
-    (result) => {
-      return (jsonfy(result));
-    });
-}
-
-
-

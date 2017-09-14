@@ -2,39 +2,42 @@ import  {EventEmitter} from 'events';
 
 import dispatcher from '../dispatchers/dispatcher';
 
-class DataStore extends EventEmitter{
-  constructor(){
+class DataStore extends EventEmitter {
+  constructor() {
     super();
 
+
+    this.companyNames = [];
     this.interval = null;
-    this.companyData =  [];
-    this.databaseData =  {
-      stats:{},
-      log:{},
-      buildInfo:{}
+    this.companyData = [];
+    this.companyInfo = {};
+
+    this.databaseData = {
+      stats: {},
+      log: {},
+      buildInfo: {}
     };
   }
 
-  getData(){
-    return this.companyData;
-  }
+  /**
+   * Receives Actions and execute methods according to its type.
+   * @param action
+   */
+  handleActions(action) {
+    let actiontype = action.type.split(":");
+    let type = actiontype[0];
+    let param1 = actiontype[1];
 
-  getDatabaseData(){
-    return this.databaseData;
-  }
-
-  getDatabaseLog(){
-    return this.databaseData.log;
-  }
-
-
-  handleActions(action){
-    switch(action.type) {
-      case "FETCH_COMPANY_DATA" :
-        this.fetchCompanyData(action.data);
+    switch (type) {
+      case "FETCH_COMPANY_NAMES" :
+        this.fetchCompanyNames(action.data);
         break;
-      case "FETCH_DATABASE_LOG":
-        this.fetchDatabaseLog(action.data);
+      case "FETCH_COMPANY_DATA":
+        this.fetchCompanyData(action.data, param1);
+        break;
+      case "FETCH_COMPANY_INFO":
+        console.log(actiontype)
+        this.fetchCompanyInformation(action.data, param1);
         break;
       case "FETCH_DATABASE_BUILDINFO":
         this.fetchDatabaseBuildInfo(action.data);
@@ -43,29 +46,115 @@ class DataStore extends EventEmitter{
         this.fetchDatabaseStats(action.data);
         break;
     }
+
   }
+    /**
+     *
+     * @returns {Array|*} Symbols of Companies in the database
+     */
+    getCompanyNames()
+    {
+      return this.companyNames;
+    }
 
-  fetchCompanyData(data){
-    this.companyData = (data);
-    this.emit('data_changed');
-  }
+    getCompanyInformation(symbol)
+    {
+      return this.companyInfo[symbol];
+    }
 
-   fetchDatabaseLog(data){
-     this.databaseData.log = (data);
-     this.emit('database_log_changed');
-   }
-   fetchDatabaseBuildInfo(data){
-     this.databaseData.buildInfo = (data);
-     this.emit('database_changed');
-   }
-   fetchDatabaseStats(data){
-     this.databaseData.stats = (data);
-     this.emit('database_changed');
-   }
+    /**
+     * Returns companydata of one company
+     * @param symbol
+     * @returns {*}
+     */
+    getCompanyData(symbol)
+    {
+      return this.companyData[symbol];
+    }
+
+    getDatabaseData()
+    {
+      return this.databaseData;
+    }
+
+    getDatabaseLog()
+    {
+      return this.databaseData.log;
+    }
 
 
+    /**
+     * Fetches Companydata and emit it to the components
+     * @param data
+     * @param symbol
+     */
+    fetchCompanyData(data, symbol)
+    {
+      if(symbol) {
+        this.companyData[symbol] = (data);
+        this.emit('data_changed_' + symbol.toUpperCase());
+      }
+    }
+    /**
+     * Sets Store, when new data ist arriving and informs listener
+     * @param data Data from Action
+     */
+    fetchCompanyNames(data)
+    {
+      this.companyNames = (data);
+      this.emit('company_names_changed');
+    }
+
+    /**
+     * Puts information concerning the companies to the store
+     * @param data
+     * @param symbol
+     */
+    fetchCompanyInformation(data, symbol)
+    {
+      this.companyInfo[symbol] = (data);
+      this.emit('info_changed_' + symbol.toUpperCase());
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    fetchDatabaseLog(data)
+    {
+      this.databaseData.log = (data);
+      this.emit('database_log_changed');
+    }
+
+    fetchDatabaseBuildInfo(data)
+    {
+      this.databaseData.buildInfo = (data);
+      this.emit('database_changed');
+    }
+
+    fetchDatabaseStats(data)
+    {
+      this.databaseData.stats = (data);
+      this.emit('database_changed');
+    }
 }
 
+
+
+
+
+
+/**
+ * Register Dispatcher
+ * @type {DataStore}
+ */
 const dataStore = new DataStore();
 dispatcher.register(dataStore.handleActions.bind(dataStore));
 

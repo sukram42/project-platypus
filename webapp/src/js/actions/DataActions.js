@@ -5,17 +5,60 @@
 import dispatcher from '../dispatchers/dispatcher';
 import axios from 'axios';
 
-export const POLLING_TIME= 10000;
+var env = process.env.NODE_ENV || 'development';
+const config = require('../../../../config')[env];
 
-export function fetchCompanyData(symbol) {
-  axios.get('https://api.iextrading.com/1.0/stock/' + symbol + '/company')
+
+export const POLLING_TIME= config.polling;
+
+/**
+ * FETCHING OF COMPANY NAMES IN THE DATABASE
+ */
+export function fetchCompanyNames(){
+  let url = "http://" + config.server.host +":" + config.server.port + "/api/companies/names";
+  axios.get(url)
+  .then(response=>{
+      dispatcher.dispatch({
+        "type":'FETCH_COMPANY_NAMES',
+        "data": response.data
+      })
+  });
+}
+
+/**
+ * Fetches Companydata from backendserver
+ * @param symbol
+ */
+function fetchCompanyData(symbol) {
+  let url = "http://" + config.server.host +":" + config.server.port + "/api/companies/" + symbol ;
+  axios.get(url)
     .then(response=>{
       dispatcher.dispatch({
-        "type":'FETCH_COMPANY_ONE',
+        "type":'FETCH_COMPANY_DATA:' + symbol.toUpperCase(),
         "data": response.data
       })
     });
 }
+/**
+ * Starts polling of companydata
+ * @param symbol  CompanySymbol
+ * @returns Interval-entity
+ */
+export function startCompanyPolling(symbol){
+    let interval =  setInterval(()=>fetchCompanyData(symbol),50000);
+    return interval;
+}
+/**
+ * Starts polling of companydata
+ * @param symbol
+ * @returns {number}
+ */
+export function stopCompanyPolling(interval){
+  if(interval){
+    clearInterval(interval);
+  }else throw "Error! No valid Interval given! ";
+}
+
 
 export function fetchData()
 {
@@ -28,6 +71,42 @@ export function fetchData()
       })
     });
 }
+
+
+/**
+ * Fetches Company Information
+ * @param symbol
+ */
+export function fetchCompanyInformation(symbol) {
+  if(symbol) {
+    axios.get('https://api.iextrading.com/1.0/stock/' + symbol + '/company')
+      .then(response => {
+        dispatcher.dispatch({
+          "type": 'FETCH_COMPANY_INFO:' + symbol.toUpperCase(),
+          "data": response.data
+        })
+      });
+  }else console.log("Fehler");
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export function fetchDatabaseStats()
 {
@@ -77,8 +156,6 @@ export function stopPollingLog()
     clearInterval(this.interval);
   }
 }
-
-
 export function startPolling()
 {
   if(!this.interval) {

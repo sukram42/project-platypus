@@ -69,10 +69,8 @@ function createDatabase() {
 }
 
 
-function doQuery(query, useConnection) {
+function doQuery(query) {
     return new Promise((resolve, reject) => {
-       // if (useConnection && !(connect = connection)) {connection = connect = connectDatabase();}
-        //else if(!connect){connect = connectDatabase()};
         connection.query(query,(err, result)=> {
             if (err) reject(err);
             else resolve(result);
