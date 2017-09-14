@@ -65,17 +65,7 @@ router.get('/:companyId', (req, res) => {
 
   console.log("Request on route /:companyId");
 
-  let from = new Date(req.query.from), to = new Date(req.query.to);
-
-  if(from && to){
-    console.log(req.query);
-    model.getCompanyDataFromDate(req.params.companyId,new Date(from),new Date(to))
-      .then(promiseData => {promiseData.subscribe(data => res.send(data), err => res.send(err))});
-  }else {
-    model.getCompanyInformation(req.params.companyId).then(promiseData => {
-      promiseData.subscribe(data => res.send(data), err => res.send(err));
-    });
-  }
+  model.getCompanyInformation(req.params.companyId).then((data) => res.send(data), (err) => res.send(err));
 });
 
 
