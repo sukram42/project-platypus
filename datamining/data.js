@@ -1,45 +1,35 @@
 /**
- * URL of the MongoDB
+ * Created by boebel on 13.09.2017.
  */
-var MONGO_URL = 'mongodb://192.168.99.100:27017/datamining';
-var COLLECTION_NAME = 'companies';
-var INTERVAL = 5000;
-var INITIALIZE_DB = true;
-
-/**
- * Abbreviation of companies
- * AAPL  | Apple
- * AMZN  | Amazon
- * HPE   | Hewlett Packard Enterprise
- * IBM   | IBM
- * DXC   | DXC Technology
- * DVMT  | DELL
- * CSCO  | Cisco
- * INTC  | Intel
- * SMCI  | Super Micro
- * GOOGL | Google
- *
- * @type {[*]}
- */
-var symbols = ["AAPL", "HPE", "IBM", "DXC", "DVMT", "CSCO", "INTC", "SAP", "ORCL"];
-
-var requestify = require('requestify');
-var mongo = require('mongodb').MongoClient;
-var assert = require('assert');
-var moment = require('moment');
-
-/**Standard URL to get the information
- *
- %#company#% -> Placeholder for the company symbol*/
+const moment = require('moment');
+const requestify = require('requestify');
+const Vertica = require('vertica');
+const config = require('../config')['production'];
 var standardURL = "https://api.iextrading.com/1.0/stock/%#company#%/quote";//?filter=symbol,latestTime,latestPrice,latestVolume,change,delayedPrice,delayedPriceTime";
 
+var connection;
 var iteration = 0;
 
 /**
- * Start Initialization if its wanted
+ * Start initialization if wanted.
+ * Set Interval for datapolling
  */
-INITIALIZE_DB ? initDB() : console.log("No Initalization");
-setInterval(getData, INTERVAL);
+connection = connectDatabase();
+
+
+config.datamining.initialisation ? initDB() : console.log("No Initialisation");
+setInterval(getData, config.datamining.interval)
+
+function connectDatabase() {
+
+    console.log("Connect to Database");
+    return connection = Vertica.connect({
+        host: config.database.host,
+        user: config.database.user,
+        password: config.database.password,
+        database: config.database.database
+    }, (err) =>  {if(err)console.error(err)});
+}
 
 
 /**
@@ -47,49 +37,48 @@ setInterval(getData, INTERVAL);
  * INITIALIZATION
  * ##########################################################################
  */
+
 function initDB() {
-    console.log("Starting Initialization")
-    mongo.connect(MONGO_URL, function (err, db) {
-        deleteDB(db, (err, result) => {
-            if (err)
-                console.log("ERROR", error);
-            else {
-                console.log("dropped Table");
-                createFields(db);
-            }
+    dropTable()
+        .then(() => {
+            return createDatabase();
+        }).then(()=> {
+            setInterval(getData, config.datamining.interval);
+    });
+}
+
+function dropTable() {
+    console.log("DROP TABLE");
+    let query = "DROP TABLE IF EXISTS " + config.database.maintable;
+    //query = "INSERT INTO sharevalues(timestamp,price,change,volume,delayedPrice,delayedPriceTime,symbol)  VALUES ('2017-09-13 4:02:15',32.14,-0.27,5288150,32.12,'2017-09-13 3:47:14','CSCO')";
+    return doQuery(query);
+}
+
+function createDatabase() {
+    let query = "CREATE TABLE IF NOT EXISTS " + config.database.maintable +
+        "(timestamp TIMESTAMP" +
+        ", price numeric(5,2)" +
+        ",change numeric(5,2)" +
+        ",volume integer" +
+        ",delayedPrice numeric(5,2)" +
+        ",delayedPriceTime timestamp" +
+        ",symbol varchar(6)" +
+        ",PRIMARY KEY(symbol,timestamp));";
+    console.log("CREATE NEW TABLE");
+    return doQuery(query,true);
+}
+
+
+function doQuery(query, useConnection) {
+    return new Promise((resolve, reject) => {
+       // if (useConnection && !(connect = connection)) {connection = connect = connectDatabase();}
+        //else if(!connect){connect = connectDatabase()};
+        connection.query(query,(err, result)=> {
+            if (err) reject(err);
+            else resolve(result);
         });
-
     });
 }
-/**
- * Creates the Fields for the Companies
- * @param db
- */
-function createFields(db) {
-    symbols.forEach(symbol => {
-        let obj = {symbol, value: []};
-        getInformation(symbol)
-            .then(info => {
-                db.collection(COLLECTION_NAME).insertOne(Object.assign(JSON.parse(info.body), obj));
-            });
-    });
-
-    db.collection(COLLECTION_NAME).createIndex({symbol:1,"values.timestamp":1,"values.date":1}, (err, result)=>console.log(result));
-
-
-    console.log("Initialization finished");
-    console.log("_________________________________________________________")
-}
-
-
-function getInformation(symbol) {
-    return requestify.get('https://api.iextrading.com/1.0/stock/' + symbol + '/company')
-}
-
-function deleteDB(db, callback) {
-    db.collection(COLLECTION_NAME).deleteMany({}, (err, result) => callback(err, result));
-}
-
 
 /**
  * ##########################################################################
@@ -97,11 +86,11 @@ function deleteDB(db, callback) {
  * ##########################################################################
  */
 
-
 /**
  * Fetches Data from the API
  */
 function getData() {
+
     iteration++;
     console.log("Iteration " + iteration + " starting");
     fetchData(getURLs());
@@ -113,14 +102,13 @@ function getData() {
 function getURLs() {
     let urls = [];
 
-    symbols.forEach(company => {
+    config.datamining.symbols.forEach(company => {
         let url = standardURL.replace("%#company#%", company);
         urls.push(url);
     });
 
     return urls;
 }
-
 /**
  * Fetches the information from the API
  * @param urls
@@ -135,28 +123,30 @@ function fetchData(urls) {
             else console.log("Exchange Closed");
         });
     });
+
+
 }
 
-/**
- * Pushes Information into the Database
- * @param body
- */
 function saveInDb(body) {
-    let date = moment().format('YYYY-MM-DD');
-
     var values = {
+        "symbol": body.symbol,
         "price": body.latestPrice,
         "volume": body.latestVolume,
         "change": body.change,
         "time": body.latestTime,
-        "timestamp": moment().toDate(),
+        "timestamp": moment().format("YYYY-MM-DD h:mm:ss"),
         "delayedPrice": body.delayedPrice,
-        "delayedPriceTime": body.delayedPriceTime,
-        date
+        "delayedPriceTime": moment(body.delayedPriceTime).format("YYYY-MM-DD h:mm:ss"),
     }
 
-    mongo.connect(MONGO_URL, function (err, db) {
-        db.collection(COLLECTION_NAME).updateOne({symbol: body.symbol}, {$push: {"values": values}})
-        db.close();
-    });
+    querys = "INSERT INTO " + config.database.maintable + "(timestamp,price,change,volume,delayedPrice,delayedPriceTime,symbol)  VALUES " + "('"
+        + values.timestamp + "',"
+        + values.price + ","
+        + values.change + ","
+        + values.volume + ","
+        + values.delayedPrice + ",'"
+        + values.delayedPriceTime + "','"
+        + values.symbol + "');commit;";
+    
+    return doQuery(querys,true).then(()=>{},err => console.log(err));
 }
