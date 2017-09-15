@@ -18,7 +18,7 @@ connection = connectDatabase();
 
 
 config.datamining.initialisation ? initDB() : console.log("No Initialisation");
-setInterval(getData, config.datamining.interval)
+setInterval(getData, config.datamining.interval);
 
 function connectDatabase() {
 
@@ -43,7 +43,7 @@ function initDB() {
         .then(() => {
             return createDatabase();
         }).then(()=> {
-            setInterval(getData, config.datamining.interval);
+            console.log("Initialized");
     });
 }
 
