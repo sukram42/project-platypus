@@ -5,7 +5,7 @@
 var standards = {
     database: {
         host: '192.168.99.100',
-        port: '',
+        port: '5433',
         db: 'docker',
         user: 'dbadmin',
         passwort: 'sd',
