@@ -100,15 +100,8 @@ export default class PriceChartComponent extends Component {
     }
 
     return (
-      <Tiles fill={true} flush={false}>
-        <Tile>
           <Chart>
-            <Axis count={3}
-                  labels={[{"index": 0, "label": (minVal - puffer)}, {
-                    "index": 1,
-                    "label": items[length / 2] ? items[length / 2].price : ""
-                  }, {"index": 2, "label": (maxVal + puffer)}]}
-                  vertical={true}/>
+
             <Chart vertical={true}>
               <MarkerLabel count={length}
                            index={markerPos}
@@ -117,7 +110,7 @@ export default class PriceChartComponent extends Component {
                            index={markerPos}
                            label={items[markerPos] ? <Timestamp align="center" fields={['date', 'time', 'seconds']}
                                                                 value={new Date(items[markerPos].timestamp)}/> : ""}/>
-              <Base height='large'
+              <Base height='medium'
                     width='large'/>
               <Layers>
                 <Grid rows={5}
@@ -149,40 +142,13 @@ export default class PriceChartComponent extends Component {
                           <Timestamp align="center" value={new Date(items[length - 1].timestamp)}/> : ""
                       }]}/>
             </Chart>
+            <Axis count={3}
+                  labels={[{"index": 0, "label": (minVal - puffer)}, {
+                    "index": 1,
+                    "label": items[length / 2] ? items[length / 2].price : ""
+                  }, {"index": 2, "label": (maxVal + puffer)}]}
+                  vertical={true}/>
           </Chart>
-        </Tile>
-
-
-        <Tile>
-
-          <Box responsive={false}
-               align='center'>
-            <Title>Change</Title>
-            <Meter type='arc'
-                   size='small'
-                   vertical={false}
-                   value={+change}
-                   max={2}
-                   min={0}/>
-            <Box direction='row'
-                 justify='between'
-                 align='center'
-                 pad={{"between": "small"}}
-                 responsive={false}>
-              <Label size='small'>
-                -100%
-              </Label>
-              <Value value={(((change - 1) * 100).toFixed(0))}
-                     units='%'
-                     size='small'/>
-              <Label size='small'>
-                100%
-              </Label>
-            </Box>
-          </Box>
-        </Tile>
-      </Tiles>
-
     );
   }
 }

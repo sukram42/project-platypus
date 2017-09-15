@@ -33,10 +33,10 @@ class DataStore extends EventEmitter {
         this.fetchCompanyNames(action.data);
         break;
       case "FETCH_COMPANY_DATA":
+
         this.fetchCompanyData(action.data, param1);
         break;
       case "FETCH_COMPANY_INFO":
-        console.log(actiontype)
         this.fetchCompanyInformation(action.data, param1);
         break;
       case "FETCH_DATABASE_BUILDINFO":
@@ -59,7 +59,7 @@ class DataStore extends EventEmitter {
 
     getCompanyInformation(symbol)
     {
-      return this.companyInfo[symbol];
+      return this.companyInfo[symbol.toUpperCase()];
     }
 
     /**
@@ -69,7 +69,7 @@ class DataStore extends EventEmitter {
      */
     getCompanyData(symbol)
     {
-      return this.companyData[symbol];
+      return this.companyData[symbol.toUpperCase()];
     }
 
     getDatabaseData()
@@ -90,10 +90,10 @@ class DataStore extends EventEmitter {
      */
     fetchCompanyData(data, symbol)
     {
-      if(symbol) {
-        this.companyData[symbol] = (data);
+
+        this.companyData[symbol.toUpperCase()] = data;
         this.emit('data_changed_' + symbol.toUpperCase());
-      }
+
     }
     /**
      * Sets Store, when new data ist arriving and informs listener
@@ -112,15 +112,9 @@ class DataStore extends EventEmitter {
      */
     fetchCompanyInformation(data, symbol)
     {
-      this.companyInfo[symbol] = (data);
+      this.companyInfo[symbol.toUpperCase()] = data;
       this.emit('info_changed_' + symbol.toUpperCase());
     }
-
-
-
-
-
-
 
 
 
@@ -145,10 +139,6 @@ class DataStore extends EventEmitter {
       this.emit('database_changed');
     }
 }
-
-
-
-
 
 
 /**

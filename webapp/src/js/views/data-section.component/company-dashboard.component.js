@@ -5,10 +5,12 @@
 import React, {Component} from 'react';
 
 
+import Heading from 'grommet/components/Heading';
+import Image from 'grommet/components/Image';
 import Box from 'grommet/components/Box';
-import Headline from 'grommet/components/Headline';
 import DataStore from '../../stores/DataStore';
 import * as DataActions from '../../actions/DataActions';
+import PriceChartComponent from "./price-chart.component";
 
 export default class CompanyDashboardComponent extends Component {
 
@@ -20,59 +22,71 @@ export default class CompanyDashboardComponent extends Component {
 
     this.state = {
       companyName: "",
-      companyData:[]
+      companyData: []
     }
   }
-    /**
-     * Gets CompanyData from DataStore
-     */
 
-    getCompanyData()
-    {
-      this.setState({
-        companyData: DataStore.getCompanyData(this.state.companyName)
-      });
-    }
+  /**
+   * Gets CompanyData from DataStore
+   */
 
-    getCompanyInformation()
-    {
-      this.setState({
-        companyInformation: DataStore.getCompanyInformation(this.props.company)
-      })
-    }
+  getCompanyData() {
 
-    componentWillMount()
-    {
-      console.log("Mounted");
+    console.log("data", DataStore.getCompanyData(this.props.company));
+    this.setState({
+      companyData: DataStore.getCompanyData(this.props.company)
+    });
+  }
 
-      DataStore.on('data_changed_' + this.props.company.toUpperCase(), this.getCompanyData);
-      DataStore.on('info_changed_' + this.props.company.toUpperCase(), this.getCompanyInformation);
+  getCompanyInformation() {
+    this.setState({
+      companyInformation: DataStore.getCompanyInformation(this.props.company)
+    })
+  }
 
-      console.log(this.props.company);
-
-      DataActions.fetchCompanyInformation(this.props.company);
-      this.state.interval = DataActions.startCompanyPolling(this.props.company);
-    }
-
-    componentWillUnmount()
-    {
-      DataStore.removeListener('data_changed_' + this.props.company.toUpperCase(), this.getCompanyData);
-      DataStore.removeListener('info_changed_' + this.props.company.toUpperCase(), this.getCompanyInformation);
-      DataActions.stopCompanyPolling(this.state.interval);
-    }
+  componentWillMount() {
+    console.log('data_changed_' + this.props.company.toUpperCase());
+    DataStore.on('data_changed_' + this.props.company.toUpperCase(), this.getCompanyData);
+    DataStore.on('info_changed_' + this.props.company.toUpperCase(), this.getCompanyInformation);
 
 
-    render()
-    {
-      let company = this.props.company;
+    DataActions.fetchCompanyData(this.props.company);
+    this.state.interval = DataActions.startCompanyPolling(this.props.company);
+    DataActions.fetchCompanyInformation(this.props.company);
+  }
 
-      return (
-        <Box pad='none' fill={true}
-             colorIndex='neutral-3'>
-          <Headline margin='none'>
-            {JSON.stringify(this.state.companyInformation)}
-          </Headline>
+  componentWillUnmount() {
+
+    DataStore.removeListener('data_changed_' + this.props.company.toUpperCase(), this.getCompanyData);
+    DataStore.removeListener('info_changed_' + this.props.company.toUpperCase(), this.getCompanyInformation);
+    DataActions.stopCompanyPolling(this.state.interval);
+  }
+
+
+  render() {
+    let companyInformation = this.state.companyInformation;
+    return (
+      <Box full="vertical" pad={{"horizontal":"large","vertical":"none"}}>
+        <Box direction="row" full="horizontal">
+          <Box align="start">
+            <Image size="small"
+                   src={'https://storage.googleapis.com/iex/api/logos/' + this.props.company + '.png'}/>
+          </Box>
+          <Box align="start" full={"horizontal"} pad="medium">
+            <Heading tag="h1" margin='none'>
+              {companyInformation ? this.state.companyInformation.companyName : ""}
+            </Heading>
+            <Heading tag="h2" margin='none'>
+              {companyInformation ? this.state.companyInformation.symbol : ""}
+            </Heading>
+          </Box>
+
         </Box>
-      );
-    }
+
+        <Box>
+          <PriceChartComponent values={this.state.companyData}/>
+        </Box>
+      </Box>
+    );
+  }
 }

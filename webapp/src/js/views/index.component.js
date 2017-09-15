@@ -11,6 +11,7 @@ import Headline from 'grommet/components/Headline';
 import DataSectionComponent from './data-section.component/data-section.component';
 import DataStore from '../stores/DataStore';
 
+
 import * as DataActions from '../actions/DataActions';
 import SplashScreenComponent from "./splash-screen.component";
 
@@ -71,17 +72,19 @@ export default class IndexCompany extends Component {
           <SplashScreenComponent/>
         </Section>
 
+        <Section pad='medium'
+                 justify='center'
+                 full='vertical'
+                  >
+
+            <DataSectionComponent companies ={this.state.companyNames}/>
+        </Section>
+
         <Section pad='large'
                  justify='center'
                  align='center'
                  full='vertical'
                  colorIndex='grey-4'>
-            <DataSectionComponent companies ={this.state.companyNames}/>
-        </Section>
-        <Section pad='large'
-                 justify='center'
-                 align='center'
-                 full='vertical'>
           <Headline margin='none'>
             Section 3
           </Headline>
@@ -90,7 +93,7 @@ export default class IndexCompany extends Component {
                  justify='center'
                  align='center'
                  full='vertical'
-                 colorIndex='grey-4'>
+                 >
           <Headline margin='none'>
             Section 4
           </Headline>

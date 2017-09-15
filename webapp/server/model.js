@@ -50,7 +50,8 @@ exports.getCompanyNames = function (){
  */
 function get(query, asJSON) {
   return new Promise((resolve, reject) => {
-    connectDatabase().query(query, (err, result) => err ? reject(err) : resolve(result));
+    let connection = connectDatabase();
+    connection.query(query, (err, result) => err ? reject(err) : resolve(result));
   }).then(
     (result) => {
       return asJSON ? (jsonfy(result)) : result;

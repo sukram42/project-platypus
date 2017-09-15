@@ -16,11 +16,12 @@ var standards = {
         interval: 5000,
         symbols: ["AAPL", "HPE", "IBM", "DXC", "DVMT", "CSCO", "INTC", "SAP", "ORCL"]
     },
-    polling: 1000
+    polling: 5000
 }
 
 var config = {
     development: {
+        
         //url to be used in link generation
         url: 'http://my.site.com',
         //database connection settings

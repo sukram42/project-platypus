@@ -8,6 +8,8 @@ import CompanyDashboardComponent from './company-dashboard.component';
 
 import Carousel from 'grommet/components/Carousel';
 import Headline from 'grommet/components/Headline';
+import Box from 'grommet/components/Box';
+
 
 export default class DataSectionComponent extends Component {
 
@@ -22,18 +24,19 @@ export default class DataSectionComponent extends Component {
     let companies = this.props.companies;
 
     return (
-      <Carousel infinite={false}
-                persistentNav={false}>
-        {companies && companies.length != 0 ?
-          companies.map((company, index) =>
-            <CompanyDashboardComponent key={index} company={company}></CompanyDashboardComponent>
-          )
-          :
-          <Headline margin='none'>
-            Sorry, It looks like, I do not have any data for you
-          </Headline>
-        }
-      </Carousel>
+      <Box>
+        <Carousel persistentNav ={false}>
+                  {companies && companies.length != 0 ?
+                    companies.map((company, index) =>
+                      <CompanyDashboardComponent key={index} company={company}/>
+                    )
+                    :
+                    <Headline margin='none'>
+                      Sorry, It looks like, I do not have any data for you
+                    </Headline>
+                  }
+        </Carousel>
+      </Box>
     );
   }
 }

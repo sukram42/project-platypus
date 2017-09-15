@@ -9,7 +9,7 @@ import React, {Component} from 'react';
 import Section from 'grommet/components/Section';
 
 
-import PriceChartComponent from './price-chart.component';
+import PriceChartComponent from '../data-section.component/price-chart.component';
 
 export default class CompanyChartsTabComponent extends Component {
 

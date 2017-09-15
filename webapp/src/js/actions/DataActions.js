@@ -29,10 +29,11 @@ export function fetchCompanyNames(){
  * Fetches Companydata from backendserver
  * @param symbol
  */
-function fetchCompanyData(symbol) {
+export function fetchCompanyData(symbol) {
   let url = "http://" + config.server.host +":" + config.server.port + "/api/companies/" + symbol ;
   axios.get(url)
     .then(response=>{
+      console.log(response.data);
       dispatcher.dispatch({
         "type":'FETCH_COMPANY_DATA:' + symbol.toUpperCase(),
         "data": response.data
@@ -45,7 +46,8 @@ function fetchCompanyData(symbol) {
  * @returns Interval-entity
  */
 export function startCompanyPolling(symbol){
-    let interval =  setInterval(()=>fetchCompanyData(symbol),50000);
+    fetchCompanyData(symbol);
+    let interval =  setInterval(()=>fetchCompanyData(symbol),POLLING_TIME);
     return interval;
 }
 /**
