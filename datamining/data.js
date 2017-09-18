@@ -1,34 +1,49 @@
 /**
  * Created by boebel on 13.09.2017.
  */
+
 const moment = require('moment');
 const requestify = require('requestify');
 const Vertica = require('vertica');
-const config = require('../config')['production'];
+
+const env = process.env.NODE_ENV || 'development';
+const config = require('./config')[env];
+
+const log4js = require('log4js');
+
 var standardURL = "https://api.iextrading.com/1.0/stock/%#company#%/quote";//?filter=symbol,latestTime,latestPrice,latestVolume,change,delayedPrice,delayedPriceTime";
+
+var exports = module.exports = {};
+
+log4js.configure(config.log);
+const logger = log4js.getLogger('datalog','console');
+
 
 var connection;
 var iteration = 0;
 
-/**
- * Start initialization if wanted.
- * Set Interval for datapolling
- */
-connection = connectDatabase();
+var database =  process.env.database ||config.database.db;
+var host =  process.env.host || config.database.host;
+var user =  process.env.user || config.database.user;
+var password = process.env.password ||config.database.password;
 
+logger.info("Connect to " + host);
+logger.info("Database " + database);
+logger.info("NODE_ENV: " + env);
 
-config.datamining.initialisation ? initDB() : console.log("No Initialisation");
-setInterval(getData, config.datamining.interval);
-
-function connectDatabase() {
-
-    console.log("Connect to Database");
+exports.connectDatabase = function() {
+    logger.info("Connect to Database");
     return connection = Vertica.connect({
-        host: config.database.host,
-        user: config.database.user,
-        password: config.database.password,
-        database: config.database.database
-    }, (err) =>  {if(err)console.error(err)});
+        host,
+        user,
+        password,
+        database
+    }, (err) =>  {
+        if(err){
+            logger.fatal("DATABASE ERROR:",err);
+            logger.fatal("EXECUTION STOPPED");
+            process.exit();
+        }});
 }
 
 
@@ -38,23 +53,25 @@ function connectDatabase() {
  * ##########################################################################
  */
 
-function initDB() {
-    dropTable()
+
+
+ exports.initDB = function() {
+    exports.dropTable()
         .then(() => {
-            return createDatabase();
+            return exports.createDatabase();
         }).then(()=> {
-            console.log("Initialized");
+            logger.info("Initialized");
     });
 }
 
-function dropTable() {
-    console.log("DROP TABLE");
+ exports.dropTable = function() {
+    logger.info("DROP TABLE");
     let query = "DROP TABLE IF EXISTS " + config.database.maintable;
-    //query = "INSERT INTO sharevalues(timestamp,price,change,volume,delayedPrice,delayedPriceTime,symbol)  VALUES ('2017-09-13 4:02:15',32.14,-0.27,5288150,32.12,'2017-09-13 3:47:14','CSCO')";
-    return doQuery(query);
+
+    return exports.doQuery(query);
 }
 
-function createDatabase() {
+ exports.createDatabase = function() {
     let query = "CREATE TABLE IF NOT EXISTS " + config.database.maintable +
         "(timestamp TIMESTAMP" +
         ", price numeric(5,2)" +
@@ -64,15 +81,15 @@ function createDatabase() {
         ",delayedPriceTime timestamp" +
         ",symbol varchar(6)" +
         ",PRIMARY KEY(symbol,timestamp));";
-    console.log("CREATE NEW TABLE");
-    return doQuery(query,true);
+        logger.info("CREATE NEW TABLE");
+    return exports.doQuery(query,true);
 }
 
 
-function doQuery(query) {
+ exports.doQuery = function(query) {
     return new Promise((resolve, reject) => {
         connection.query(query,(err, result)=> {
-            if (err) reject(err);
+            if (err)reject(err)
             else resolve(result);
         });
     });
@@ -87,17 +104,17 @@ function doQuery(query) {
 /**
  * Fetches Data from the API
  */
-function getData() {
+ exports.getData = function() {
 
     iteration++;
-    console.log("Iteration " + iteration + " starting");
-    fetchData(getURLs());
+    logger.info("Iteration " + iteration + " starting");
+    exports.fetchData(exports.getURLs());
 }
 
 /**
  * Generates the API URLs
  */
-function getURLs() {
+ exports.getURLs = function() {
     let urls = [];
 
     config.datamining.symbols.forEach(company => {
@@ -111,21 +128,19 @@ function getURLs() {
  * Fetches the information from the API
  * @param urls
  */
-function fetchData(urls) {
+ exports.fetchData = function(urls) {
 
     urls.forEach(url => {
         requestify.get(url).then(response => {
             if (response.getBody().latestPrice) {
-                saveInDb(response.getBody());
+                exports.saveInDb(response.getBody());
             }
-            else console.log("Exchange Closed");
+            else logger.info("Exchange Closed");
         });
     });
-
-
 }
 
-function saveInDb(body) {
+ exports.saveInDb = function(body) {
     var values = {
         "symbol": body.symbol,
         "price": body.latestPrice,
@@ -146,5 +161,14 @@ function saveInDb(body) {
         + values.delayedPriceTime + "','"
         + values.symbol + "');commit;";
     
-    return doQuery(querys,true).then(()=>{},err => console.log(err));
+    return exports.doQuery(querys,true).then(()=>{},err => logger.error(err));
 }
+
+/**
+ * Start initialization if wanted.
+ * Set Interval for datapolling
+ */
+connection = exports.connectDatabase();
+
+config.datamining.initialisation ? exports.initDB() : logger.info("No Initialisation");
+setInterval(exports.getData, config.datamining.interval);

@@ -4,13 +4,22 @@
   "description": "",
   "main": "data.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test/data.test.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "log4js": "^2.3.3",
+    "moment": "^2.18.1",
     "mongodb": "^2.2.31",
     "requestify": "^0.2.5",
+    "rxjs": "^5.4.3",
+    "sqlstring": "^2.2.0",
     "vertica": "^0.5.5"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^3.5.3",
+    "sinon": "^3.3.0"
   }
 }

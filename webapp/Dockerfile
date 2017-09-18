@@ -28,8 +28,6 @@ RUN apt-get install -y -q --no-install-recommends \
     wget \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get -y autoclean
-	
-	
 
 
 ENV NVM_DIR /usr/local/nvm
@@ -45,8 +43,8 @@ RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.26.0/install.sh
 # Set up our PATH correctly so we don't have to long-reference npm, node, &c.
 ENV NODE_PATH $NVM_DIR/versions/node/v$NODE_VERSION/lib/node_modules
 ENV PATH      $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
-	
-	
+
+
 # Set the work directory
 RUN mkdir -p /var/www/app/current
 WORKDIR ${appDir}
@@ -66,4 +64,3 @@ CMD ["node", "server"]
 
 
 
-	

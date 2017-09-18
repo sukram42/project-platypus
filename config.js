@@ -4,7 +4,7 @@
 
 var standards = {
     database: {
-        host: '192.168.99.100',
+        host: '172.17.0.3',
         port: '5433',
         db: 'docker',
         user: 'dbadmin',
@@ -21,7 +21,7 @@ var standards = {
 
 var config = {
     development: {
-        
+
         //url to be used in link generation
         url: 'http://my.site.com',
         //database connection settings
@@ -33,6 +33,11 @@ var config = {
         },
         datamining: standards.datamining,
         polling: standards.polling,
+        log:{
+            appenders: { datalog: { type: 'file', filename: 'data.log' },
+                         console: { type: 'console'}},
+            categories: { default: { appenders: ['datalog','console'], level: 'all' } }
+        }
     },
     production: {
         //url to be used in link generation
@@ -44,6 +49,11 @@ var config = {
         },
         datamining: standards.datamining,
         polling: standards.polling,
-    }
+        log:{
+            appenders: { datalog: { type: 'file', filename: 'data.log' }},
+            categories: { default: { appenders: ['datalog'], level: 'Error' } }
+        }
+    },
+
 };
 module.exports = config;

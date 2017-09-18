@@ -9,8 +9,10 @@ const Rx = require('rxjs/Rx');
 const Vertica = require('vertica');
 
 var SqlString = require('sqlstring');
+
 var env = process.env.NODE_ENV || 'development';
-const config = require('../../config')[env];
+const config = require('../config')[env];
+
 var exports = module.exports = {};
 
 exports.getAll = function () {
@@ -18,9 +20,14 @@ exports.getAll = function () {
   return get(query);
 }
 
-exports.getCompanyInformation = function (symbol) {
+exports.getCompanyInformation = function (symbol, amount, unit) {
   if (symbol) {
-    let query = "SELECT * FROM " + config.database.maintable + " WHERE symbol = " + SqlString.escape(symbol);
+    let slicing = SqlString.escape(amount +" " + unit);
+    let companyQuery = "(SELECT * FROM " + config.database.maintable + " WHERE symbol LIKE "+ SqlString.escape(symbol) + ") as companyQuery ";
+    let overQuery = " OVER(PARTITION by companyQuery.symbol ORDER BY timestamp);";
+    let timeseriesQuery = "TIMESERIES slice_time AS " + slicing + " ";
+    let query = " SELECT slice_time as timestamp, TS_LAST_VALUE(price) as price ,TS_LAST_VALUE(volume) as volume , TS_LAST_VALUE(change) as change,TS_LAST_VALUE(delayedPrice) as delayedPrice ,TS_LAST_VALUE(delayedPriceTime) AS delayedPriceTime FROM " + companyQuery + timeseriesQuery + overQuery;
+
     return get(query, true);
   } else return null;
 }
@@ -33,11 +40,11 @@ exports.getCompanyDataFromDate = function (symbol, fromDate, toDate) {
   // return find({symbol, "values":{$elemMatch:{"timestamp":{$gte:fromDate, $lte:toDate}}}});
 }
 
-exports.getCompanyNames = function (){
+exports.getCompanyNames = function () {
   query = "SELECT symbol from " + config.database.maintable + " GROUP BY symbol";
-  return get(query).then((data)=>{
+  return get(query).then((data) => {
     let erg = [];
-    data.rows.map(item =>erg.push(item[0]));
+    data.rows.map(item => erg.push(item[0]));
     return erg;
   });
 }
@@ -51,7 +58,13 @@ exports.getCompanyNames = function (){
 function get(query, asJSON) {
   return new Promise((resolve, reject) => {
     let connection = connectDatabase();
-    connection.query(query, (err, result) => err ? reject(err) : resolve(result));
+    connection.query(query, (err, result) =>{
+      err ? reject(err) : resolve(result, connection);
+      try {
+        connection.disconnect();
+      }catch (err){console.log(err)}
+      });
+
   }).then(
     (result) => {
       return asJSON ? (jsonfy(result)) : result;

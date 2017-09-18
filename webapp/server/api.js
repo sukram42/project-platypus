@@ -72,7 +72,7 @@ router.get('/companies/names', (req, res) => {
 router.get('/companies/:companyId', (req, res) => {
   console.log("Request on route /:companyId");
   let company = req.params.companyId.toUpperCase();
-  model.getCompanyInformation(company).then((data) => res.send(data), (err) => res.send(err));
+  model.getCompanyInformation(company,req.query.amount,req.query.unit).then((data) => res.send(data), (err) => res.send(err));
 });
 
 
