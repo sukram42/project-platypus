@@ -30,7 +30,7 @@ export function fetchCompanyNames(){
  * @param symbol
  */
 export function fetchCompanyData(symbol) {
-  let url = "http://" + config.server.host +":" + config.server.port + "/api/companies/" + symbol ;
+  let url = "http://" + config.server.host +":" + config.server.port + "/api/companies/" + symbol +"?amount=30&unit=minutes" ;
   axios.get(url)
     .then(response=>{
       console.log(response.data);
