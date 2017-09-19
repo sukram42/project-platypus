@@ -35,7 +35,6 @@ export function fetchCompanyData(symbol) {
   let url = "http://" + config.server.host +":" + config.server.port + "/api/companies/" + symbol +"?count=" + count;
   axios.get(url)
     .then(response=>{
-      console.log(response.data);
       dispatcher.dispatch({
         "type":'FETCH_COMPANY_DATA:' + symbol.toUpperCase(),
         "data": response.data
