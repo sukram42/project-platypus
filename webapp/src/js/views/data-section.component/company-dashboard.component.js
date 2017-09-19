@@ -80,9 +80,7 @@ export default class CompanyDashboardComponent extends Component {
               {companyInformation ? this.state.companyInformation.symbol : ""}
             </Heading>
           </Box>
-
         </Box>
-
         <Box>
           <PriceChartComponent values={this.state.companyData}/>
         </Box>
