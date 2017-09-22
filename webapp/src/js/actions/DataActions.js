@@ -5,7 +5,7 @@
 import dispatcher from '../dispatchers/dispatcher';
 import axios from 'axios';
 
-var env = process.env.NODE_ENV || 'development';
+const env = process.env.NODE_ENV || 'development';
 const config = require('../../../../config')[env];
 
 
@@ -15,7 +15,7 @@ export const POLLING_TIME = config.polling;
  * FETCHING OF COMPANY NAMES IN THE DATABASE
  */
 export function fetchCompanyNames() {
-  let url = "http://" + config.server.host + ":" + config.server.port + "/api/companies/names";
+  let url = (env == 'development' ? "http://" + config.server.host + ":" + config.server.port + "/" : "") + "api/companies/names";
   axios.get(url)
     .then(response => {
       dispatcher.dispatch({
@@ -34,7 +34,8 @@ export function fetchCompanyNames() {
 export function fetchCompanyData(symbol) {
   const count = 30;
 
-  let url = "http://" + config.server.host + ":" + config.server.port + "/api/companies/" + symbol + "?count=" + count;
+
+  let url = (env == 'development' ? "http://" + config.server.host + ":" + config.server.port + "/" : "") + "api/companies/" + symbol + "?count=" + count;
   axios.get(url)
     .then(response => {
       dispatcher.dispatch({
@@ -65,18 +66,6 @@ export function stopCompanyPolling(interval) {
 }
 
 
-export function fetchData() {
-  //TODO Port ändern
-  axios.get('http://localhost:3001/api/companies')
-    .then(response => {
-      dispatcher.dispatch({
-        "type": 'FETCH_COMPANY_DATA',
-        "data": response.data
-      })
-    });
-}
-
-
 /**
  * Fetches Company Information
  * @param symbol
@@ -98,7 +87,7 @@ export function fetchCompanyInformation(symbol) {
  * @param symbol
  */
 export function fetchMaxAndMin() {
-  axios.get('http://localhost:3001/api/companies/max')
+  axios.get((env == 'development' ? "http://" + config.server.host + ":" + config.server.port + "/" : "") + 'api/companies/max')
     .then(response => {
       dispatcher.dispatch({
         "type": 'FETCH_COMPANY_MAX',
@@ -107,44 +96,4 @@ export function fetchMaxAndMin() {
     }, (err) => {
       console.log("Ups", err);
     });
-}
-
-
-export function startPollingLog() {
-  if (!this.logInterval) {
-    this.logInterval = setInterval(() => {
-      fetchDatabaseLog();
-    }, POLLING_TIME);
-  }
-}
-export function stopPollingLog() {
-  if (this.logInterval) {
-    clearInterval(this.interval);
-  }
-}
-export function startPolling() {
-  if (!this.interval) {
-    this.interval = setInterval(() => {
-      fetchData();
-    }, POLLING_TIME);
-  }
-}
-export function stopPolling() {
-  if (this.interval) {
-    clearInterval(this.interval);
-  }
-}
-
-
-export function startPollingCompany(symbol) {
-  if (!this.interval) {
-    this.companyInterval[symbol] = setInterval(() => {
-      fetchCompanyData();
-    }, POLLING_TIME);
-  }
-}
-export function stopPollingCompany(symbol) {
-  if (this.companyInterval[symbol]) {
-    clearInterval(this.interval);
-  }
 }

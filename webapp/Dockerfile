@@ -31,7 +31,8 @@ RUN apt-get install -y -q --no-install-recommends \
 
 
 ENV NVM_DIR /usr/local/nvm
-ENV NODE_VERSION 6.11.3
+ENV NODE_VERSION 8.5.0
+
 
 # Install nvm with node and npm
 RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.26.0/install.sh | bash \
@@ -59,7 +60,8 @@ ADD . /var/www/app/current
 #Expose the port
 EXPOSE 3000
 
-#CMD ["pm2", "start", "processes.json", "--no-daemon"]
+ENV NODE_ENV production
+
 CMD ["node", "server"]
 
 

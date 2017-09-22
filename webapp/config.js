@@ -44,7 +44,7 @@ var config = {
     //url to be used in link generation
     url: 'http://my.site.com',
     database: {
-      host: '172.17.0.2',
+      host: '172.17.0.3',
       port: '5433',
       db: 'docker',
       user: 'dbadmin',

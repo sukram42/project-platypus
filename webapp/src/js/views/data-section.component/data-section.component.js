@@ -48,17 +48,17 @@ export default class DataSectionComponent extends Component {
 
     return (
       <Box >
+        {companies && companies.length != 0 ?
         <Carousel persistentNav ={true}>
-                  {companies && companies.length != 0 ?
-                    companies.map((company, index) =>
+          {companies.map((company, index) =>
                       <CompanyDashboardComponent max={this.state.max} key={index} company={company}/>
-                    )
-                    :
-                    <Headline>
-                      Sorry, It looks like, I do not have any data for you
-                    </Headline>
-                  }
+                    )}
         </Carousel>
+          :
+          <Headline>
+          Sorry, It looks like, I do not have any data for you
+          </Headline>
+        }
       </Box>
     );
   }
