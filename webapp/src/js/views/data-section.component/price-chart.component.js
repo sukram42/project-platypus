@@ -2,26 +2,26 @@
  * Created by boebel on 06.09.2017.
  */
 
-/**
- * Created by boebel on 06.09.2017.
- */
-/**
- * Created by boebel on 06.09.2017.
- */
 import React, {Component} from 'react';
 
 import Chart, {Axis, Marker, HotSpots, Base, Grid, Line, Layers, MarkerLabel} from 'grommet/components/Chart';
 
-import Meter from 'grommet/components/Meter';
-import Tiles from 'grommet/components/Tiles';
-import Tile from 'grommet/components/Tile';
-import Value from 'grommet/components/Value';
-import Label from 'grommet/components/Value';
-import Box from 'grommet/components/Box';
-import Title from 'grommet/components/Title';
 
 import Timestamp from 'grommet/components/Timestamp';
+import Value from 'grommet/components/Value';
+import Box from 'grommet/components/Box';
 
+import Moment from 'moment';
+
+import LinkUp from 'grommet/components/icons/base/LinkUp';
+import LinkDown from 'grommet/components/icons/base/LinkDown';
+
+import LineChart from 'grommet/components/icons/base/LineChart';
+import Duplicate from 'grommet/components/icons/base/Duplicate';
+import LinkTop from 'grommet/components/icons/base/LinkTop';
+import LinkBottom from 'grommet/components/icons/base/LinkBottom';
+
+import {Row, Visible, Col, Hidden} from "react-grid-system";
 
 export default class PriceChartComponent extends Component {
 
@@ -34,7 +34,13 @@ export default class PriceChartComponent extends Component {
       priceArray: [],
       puffer: 0.25,//Space to the bottom and top of chart
       markerPos: 0,//Position of the Marker
-      elementCount: 150 //Count of points in Diagramm
+      dateOptions:{
+        "day":"2-digit",
+        "month":"2-digit",
+        "year":"2-digit",
+        "hour":"numeric",
+        "minute":"numeric"
+      }
     }
 
   }
@@ -45,8 +51,6 @@ export default class PriceChartComponent extends Component {
       minVal: 10000000,
       priceArray: []
     }, () => this.getPriceArray(nextProps));
-
-
   }
 
   componentWillMount() {
@@ -54,22 +58,17 @@ export default class PriceChartComponent extends Component {
   }
 
   getPriceArray(nextProps) {
+
     let props = nextProps || this.props;
+
     let items = props.values;
 
     this.state.itemLength = items.length;
-    let elementCount = this.state.elementCount;
-
-    //Filter Elements
-    items = items.filter(function (value, index, Arr) {
-      return index % Math.ceil(items.length / elementCount) == 0;
-    });
 
     this.setState({items});
 
     let minVal = this.state.minVal;
     let maxVal = this.state.maxVal;
-
 
     let prices = items.map((item) => {
 
@@ -78,7 +77,8 @@ export default class PriceChartComponent extends Component {
       if (price > maxVal) maxVal = price;
       return price;
     });
-    this.setState({priceArray: prices, minVal, maxVal})
+    if (prices !== this.state.priceArray)
+      this.setState({priceArray: prices, minVal, maxVal})
 
     return prices;
   }
@@ -93,32 +93,45 @@ export default class PriceChartComponent extends Component {
     let puffer = this.state.puffer;
     let minVal = this.state.minVal;
     let maxVal = this.state.maxVal;
-    let change = 1;
+    let volume = 0;
+    let max = this.props.max;
+    let change= 0;
+    let options = this.state.dateOptions;
+
     try {
-      change = (items[markerPos] ? +items[markerPos].change : items[length - 1].change) + 1;
+      change = (items[markerPos] ? +items[markerPos].change : items[length - 1].change) ;
+      volume = items[markerPos] ? +items[markerPos].volume : items[length - 1].volume;
     } catch (e) {
     }
 
-    return (
-          <Chart>
 
-            <Chart vertical={true}>
+
+    return (
+      <Row>
+        <Col sm={1} xl={1} xs={1}/>
+        <Col sm={6} xl={6} xs={10}
+        >
+          <Chart style={{"width": "100%"}}>
+            <Chart vertical={true} style={{"width": "100%"}}
+            >
+
+
               <MarkerLabel count={length}
                            index={markerPos}
                            label={<Value value={(priceArray[markerPos] || priceArray[length - 1] ) + " $"}/>}/>
               <MarkerLabel count={length}
                            index={markerPos}
-                           label={items[markerPos] ? <Timestamp align="center" fields={['date', 'time', 'seconds']}
-                                                                value={new Date(items[markerPos].timestamp)}/> : ""}/>
-              <Base height='medium'
-                    width='large'/>
+                           label={items[markerPos] ? Moment(items[markerPos].timestamp).format('DD/MM/YYYY h:mm A') : ""}/>
+
+              <Base style={{"width": "100%"}}/>
               <Layers>
-                <Grid rows={5}
-                      columns={3}/>
+                <Grid rows={7}
+                      columns={5}/>
                 <Line values={priceArray}
+                      smooth={true}
                       max={maxVal + puffer}
                       min={minVal - puffer}
-                      colorIndex='accent-1'
+                      colorIndex='accent-2'
                       activeIndex={markerPos}/>
                 <Marker colorIndex='graph-2'
                         count={length}
@@ -131,15 +144,17 @@ export default class PriceChartComponent extends Component {
                             this.setState({markerPos: index});
                           }}/>
               </Layers>
+
+
               <Axis count={2}
                     labels={[{
                       "index": 0,
-                      "label": items[0] ? <Timestamp align="center" value={new Date(items[0].timestamp)}/> : ""
+                      "label": items[0] ? Moment(items[0].timestamp).format('DD/MM/YYYY h:mm A') : ""
+
                     }
                       , {
                         "index": 1,
-                        "label": items[length - 1] ?
-                          <Timestamp align="center" value={new Date(items[length - 1].timestamp)}/> : ""
+                        "label": items[length - 1] ? Moment(items[length - 1].timestamp).format('DD/MM/YYYY h:mm A') : ""
                       }]}/>
             </Chart>
             <Axis count={3}
@@ -149,6 +164,57 @@ export default class PriceChartComponent extends Component {
                   }, {"index": 2, "label": (maxVal + puffer)}]}
                   vertical={true}/>
           </Chart>
+
+        </Col>
+        <Col sm={1} xl={1} xs={1}/>
+        <Col sm={3} xl={3} xs={0}>
+          <Hidden xs>
+            <Box pad={{"between": "large"}}>
+              <Hidden xs>
+                <Value size="large"
+                       value={+change.toFixed(4)}
+                       label='Change'
+                       icon={change > 0 ? <LinkUp colorIndex='accent-2' size='large'/> :
+                         <LinkDown colorIndex='accent-2' size='large'/>}
+                       units='%'
+                       colorIndex='accent-2'
+                       align='start'
+                />
+              </Hidden>
+              <Hidden xs>
+                <Value size="large"
+                       value={+volume}
+                       label='Volume'
+                       colorIndex='accent-2'
+                       align='start'
+
+                />
+              </Hidden>
+              <Visible xl>
+                <Value size="large"
+                       value={max.max}
+                       units="$"
+                       label='Highest Point'
+                       colorIndex='accent-2'
+                       align='start'
+
+                />
+              </Visible>
+              <Visible xl>
+                <Value size="large"
+                       units="$"
+                       value={max.min}
+                       label='Lowest Point'
+                       colorIndex='accent-2'
+                       align='start'
+                />
+              </Visible>
+
+            </Box>
+          </Hidden>
+        </Col>
+        <Col sm={1} xl={1} xs={0}/>
+      </Row>
     );
   }
 }

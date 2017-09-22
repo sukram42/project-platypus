@@ -7,7 +7,9 @@
 
 const Rx = require('rxjs/Rx');
 const Vertica = require('vertica');
-var SqlString = require('sqlstring');
+const SqlString = require('sqlstring');
+const log4js = require('log4js');
+
 
 /**
  * Sets Environment variables and connects to config script
@@ -15,6 +17,11 @@ var SqlString = require('sqlstring');
  */
 var env = process.env.NODE_ENV || 'development';
 const config = require('../config')[env];
+
+
+log4js.configure(config.log);
+const logger = log4js.getLogger('datalog','console');
+
 
 var exports = module.exports = {};
 
@@ -54,35 +61,36 @@ exports.getCompanyInformation = function (symbol, amount, unit) {
  * @param count amount of values
  * @returns {Promise.<*>}
  */
-exports.getCompanyInformation = async function (symbol,count) {
+exports.getCompanyInformation = async function (symbol, count) {
 
-  if(symbol && count < 500) {
-    let countQuery = 'SELECT (MAX(timestamp)-MIN(timestamp))/' +  (count-1) + ' AS dif FROM sharevalues;';
+  if (symbol && count < 500) {
+    let countQuery = 'SELECT (MAX(timestamp)-MIN(timestamp))/' + (count - 1) + ' AS dif FROM sharevalues;';
 
     let interval = await get(countQuery, false);
     interval = interval.rows[0][0];
-    console.log(interval);
 
     if (symbol) {
       let companyQuery = "(SELECT * FROM " + config.database.maintable + " WHERE symbol LIKE " + SqlString.escape(symbol) + ") as companyQuery ";
       let overQuery = " OVER(PARTITION by companyQuery.symbol ORDER BY timestamp);";
-      let timeseriesQuery = "TIMESERIES slice_time AS '" + interval.hours+ ":" + interval.minutes + ":" + interval.seconds + "'";
+      let timeseriesQuery = "TIMESERIES slice_time AS '" + interval.hours + ":" + interval.minutes + ":" + interval.seconds + "'";
       let query = " SELECT slice_time as timestamp, TS_LAST_VALUE(price) as price ,TS_LAST_VALUE(volume) as volume , TS_LAST_VALUE(change) as change,TS_LAST_VALUE(delayedPrice) as delayedPrice ,TS_LAST_VALUE(delayedPriceTime) AS delayedPriceTime FROM " + companyQuery + timeseriesQuery + overQuery;
+
 
       let result = await get(query, true);
       return result;
     } else return null;
-  }else return {err: "Count too high "}
+  } else return {err: "Count too high "}
 }
 
+exports.getMaxAndMin = async function () {
+  query = "SELECT symbol, MAX(price), MIN(price) from " + config.database.maintable + " GROUP BY symbol";
 
-exports.getCompanyInformationFromDate = function (symbol, date) {
+  let queryResult = await get(query, true);
+  let result={};
+    queryResult.map(item=>(result[item.symbol]={"min":item.MAX,"max":item.MIN}));
+  return result;
+}
 
-  //return find({symbol, "values.date": date});
-}
-exports.getCompanyDataFromDate = function (symbol, fromDate, toDate) {
-  // return find({symbol, "values":{$elemMatch:{"timestamp":{$gte:fromDate, $lte:toDate}}}});
-}
 
 /**
  * returns the names of companies in the database
@@ -107,12 +115,11 @@ function get(query, asJSON) {
   return new Promise((resolve, reject) => {
     let connection = connectDatabase();
     connection.query(query, (err, result) => {
-      console.log("Result",result);
       err ? reject(err) : resolve(result, connection);
       try {
         connection.disconnect();
       } catch (err) {
-        console.log(err)
+        logger.error(err)
       }
     });
 
@@ -133,7 +140,7 @@ function connectDatabase() {
     password: config.database.password,
     database: config.database.database
   }, (err) => {
-    if (err) console.error(err)
+    if (err) logger.error(err)
   });
 }
 

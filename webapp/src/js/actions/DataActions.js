@@ -9,19 +9,21 @@ var env = process.env.NODE_ENV || 'development';
 const config = require('../../../../config')[env];
 
 
-export const POLLING_TIME= config.polling;
+export const POLLING_TIME = config.polling;
 
 /**
  * FETCHING OF COMPANY NAMES IN THE DATABASE
  */
-export function fetchCompanyNames(){
-  let url = "http://" + config.server.host +":" + config.server.port + "/api/companies/names";
+export function fetchCompanyNames() {
+  let url = "http://" + config.server.host + ":" + config.server.port + "/api/companies/names";
   axios.get(url)
-  .then(response=>{
+    .then(response => {
       dispatcher.dispatch({
-        "type":'FETCH_COMPANY_NAMES',
+        "type": 'FETCH_COMPANY_NAMES',
         "data": response.data
       })
+    }).catch(function (error) {
+    console.log(error);
   });
 }
 
@@ -30,13 +32,13 @@ export function fetchCompanyNames(){
  * @param symbol
  */
 export function fetchCompanyData(symbol) {
-  const count = 10;
+  const count = 30;
 
-  let url = "http://" + config.server.host +":" + config.server.port + "/api/companies/" + symbol +"?count=" + count;
+  let url = "http://" + config.server.host + ":" + config.server.port + "/api/companies/" + symbol + "?count=" + count;
   axios.get(url)
-    .then(response=>{
+    .then(response => {
       dispatcher.dispatch({
-        "type":'FETCH_COMPANY_DATA:' + symbol.toUpperCase(),
+        "type": 'FETCH_COMPANY_DATA:' + symbol.toUpperCase(),
         "data": response.data
       })
     });
@@ -46,30 +48,29 @@ export function fetchCompanyData(symbol) {
  * @param symbol  CompanySymbol
  * @returns Interval-entity
  */
-export function startCompanyPolling(symbol){
-    fetchCompanyData(symbol);
-    let interval =  setInterval(()=>fetchCompanyData(symbol),POLLING_TIME);
-    return interval;
+export function startCompanyPolling(symbol) {
+  fetchCompanyData(symbol);
+  let interval = setInterval(() => fetchCompanyData(symbol), POLLING_TIME);
+  return interval;
 }
 /**
  * Starts polling of companydata
  * @param symbol
  * @returns {number}
  */
-export function stopCompanyPolling(interval){
-  if(interval){
+export function stopCompanyPolling(interval) {
+  if (interval) {
     clearInterval(interval);
-  }else throw "Error! No valid Interval given! ";
+  } else throw "Error! No valid Interval given! ";
 }
 
 
-export function fetchData()
-{
+export function fetchData() {
   //TODO Port ändern
   axios.get('http://localhost:3001/api/companies')
-    .then(response=>{
+    .then(response => {
       dispatcher.dispatch({
-        "type":'FETCH_COMPANY_DATA',
+        "type": 'FETCH_COMPANY_DATA',
         "data": response.data
       })
     });
@@ -81,7 +82,7 @@ export function fetchData()
  * @param symbol
  */
 export function fetchCompanyInformation(symbol) {
-  if(symbol) {
+  if (symbol) {
     axios.get('https://api.iextrading.com/1.0/stock/' + symbol + '/company')
       .then(response => {
         dispatcher.dispatch({
@@ -89,103 +90,61 @@ export function fetchCompanyInformation(symbol) {
           "data": response.data
         })
       });
-  }else console.log("Fehler");
+  } else console.log("No Symbol given");
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-export function fetchDatabaseStats()
-{
-  //TODO Port ändern
-  axios.get('http://localhost:3001/api/database/stats')
-    .then(response=>{
+/**
+ * GET Highest and lowest prices
+ * @param symbol
+ */
+export function fetchMaxAndMin() {
+  axios.get('http://localhost:3001/api/companies/max')
+    .then(response => {
       dispatcher.dispatch({
-        "type":'FETCH_DATABASE_STATS',
+        "type": 'FETCH_COMPANY_MAX',
         "data": response.data
       })
-    });
-}
-export function fetchDatabaseLog()
-{
-  //TODO Port ändern
-  axios.get('http://localhost:3001/api/database/log')
-    .then(response=>{
-      dispatcher.dispatch({
-        "type":'FETCH_DATABASE_LOG',
-        "data": response.data
-      })
-    });
-}
-export function fetchDatabaseBuildInfo()
-{
-  //TODO Port ändern
-  axios.get('http://localhost:3001/api/database/buildInfo')
-    .then(response=>{
-      dispatcher.dispatch({
-        "type":'FETCH_DATABASE_BUILDINFO',
-        "data": response.data
-      })
+    }, (err) => {
+      console.log("Ups", err);
     });
 }
 
-export function startPollingLog()
-{
-  if(!this.logInterval) {
+
+export function startPollingLog() {
+  if (!this.logInterval) {
     this.logInterval = setInterval(() => {
       fetchDatabaseLog();
     }, POLLING_TIME);
   }
 }
-export function stopPollingLog()
-{
-  if(this.logInterval){
+export function stopPollingLog() {
+  if (this.logInterval) {
     clearInterval(this.interval);
   }
 }
-export function startPolling()
-{
-  if(!this.interval) {
+export function startPolling() {
+  if (!this.interval) {
     this.interval = setInterval(() => {
       fetchData();
     }, POLLING_TIME);
   }
 }
-export function stopPolling()
-{
-  if(this.interval){
+export function stopPolling() {
+  if (this.interval) {
     clearInterval(this.interval);
   }
 }
 
 
-export function startPollingCompany(symbol)
-{
-  if(!this.interval) {
+export function startPollingCompany(symbol) {
+  if (!this.interval) {
     this.companyInterval[symbol] = setInterval(() => {
       fetchCompanyData();
     }, POLLING_TIME);
   }
 }
-export function stopPollingCompany(symbol)
-{
-  if(this.companyInterval[symbol]){
+export function stopPollingCompany(symbol) {
+  if (this.companyInterval[symbol]) {
     clearInterval(this.interval);
   }
 }

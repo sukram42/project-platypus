@@ -4,9 +4,14 @@ const app = express();
 const path = require('path');
 const http = require('http');
 const bodyParser = require('body-parser');
+const log4js = require('log4js');
 
 var env = process.env.NODE_ENV || 'development';
 const config = require('./config')[env];
+
+log4js.configure(config.log);
+const logger = log4js.getLogger('datalog','console');
+
 
 const api = require('./server/api');
 
@@ -29,4 +34,4 @@ app.get('*', (req, res) => {
 });
 
 const server = http.createServer(app);
-server.listen(port, () => console.log(`API running on localhost:${port}`));
+server.listen(port, () => logger.info(`API running on localhost:${port}`));

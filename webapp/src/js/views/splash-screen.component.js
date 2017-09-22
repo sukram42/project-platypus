@@ -24,7 +24,7 @@ export default class SplashScreenComponent extends Component {
               <Card heading='Heading'
                     description='Hero description text.'
                     label='label'
-                    link={<Anchor href='#'
+                    link={<Anchor onClick={()=>this.props.onClick()}
                                   primary={true}
                                   label='Link'/>}/>
             </Box>

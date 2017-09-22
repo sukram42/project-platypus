@@ -10,28 +10,51 @@ import Carousel from 'grommet/components/Carousel';
 import Headline from 'grommet/components/Headline';
 import Box from 'grommet/components/Box';
 
+import DataStore from '../../stores/DataStore';
+
+
+import * as DataActions from '../../actions/DataActions';
 
 export default class DataSectionComponent extends Component {
 
   constructor() {
     super();
 
+    this.state={
+      max:{}
+    }
+
+    this.getMax = this.getMax.bind(this);
+
+    DataStore.on('company_max_changed', this.getMax);
+    DataActions.fetchMaxAndMin();
+
+
+  }
+  componentWillUnmount() {
+    DataStore.removeListener('company_max_changed', this.getMax);
   }
 
+ shouldComponentUpdate(nextProps, nextState) {
+   return !this.state.max !== nextState.max
+ }
 
+  getMax() {
+    this.setState({"max":DataStore.getMax()});
+  }
   render() {
 
     let companies = this.props.companies;
 
     return (
-      <Box>
-        <Carousel persistentNav ={false}>
+      <Box >
+        <Carousel persistentNav ={true}>
                   {companies && companies.length != 0 ?
                     companies.map((company, index) =>
-                      <CompanyDashboardComponent key={index} company={company}/>
+                      <CompanyDashboardComponent max={this.state.max} key={index} company={company}/>
                     )
                     :
-                    <Headline margin='none'>
+                    <Headline>
                       Sorry, It looks like, I do not have any data for you
                     </Headline>
                   }

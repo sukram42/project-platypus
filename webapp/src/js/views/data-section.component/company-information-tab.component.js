@@ -5,11 +5,13 @@ import React, {Component} from 'react';
 
 import Table from 'grommet/components/Table';
 import Anchor from 'grommet/components/Anchor';
+import Box from 'grommet/components/Box';
 
 export default class CompanyInformationTabComponent extends Component {
 
   render() {
     return (
+      <Box size="medium" style={{"fontSize": "125%"}}>
         <Table scrollable={false}>
           <tbody>
           <tr>
@@ -38,8 +40,6 @@ export default class CompanyInformationTabComponent extends Component {
               {this.props.item.CEO}
             </td>
           </tr>
-
-
           <tr>
             <td>
               Sector
@@ -48,18 +48,16 @@ export default class CompanyInformationTabComponent extends Component {
               {this.props.item.sector}
             </td>
           </tr>
-
+          </tbody>
+        </Table>
+        <Table>
+          <tbody>
           <tr>
-            <td>
-              Description
-            </td>
-            <td>
-              {this.props.item.description}
-            </td>
+            <td>{this.props.item.description}</td>
           </tr>
           </tbody>
         </Table>
-
+      </Box>
     );
   }
 }

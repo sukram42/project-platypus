@@ -145,7 +145,7 @@ exports.connectDatabase = function() {
         "symbol": body.symbol,
         "price": body.latestPrice,
         "volume": body.latestVolume,
-        "change": body.change,
+        "change": body.changePercent,
         "time": body.latestTime,
         "timestamp": moment().format("YYYY-MM-DD h:mm:ss"),
         "delayedPrice": body.delayedPrice,

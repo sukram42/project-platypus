@@ -1,12 +1,10 @@
 import React, {Component} from 'react';
+import ReactDOM from 'react-dom';
 
 import Article from 'grommet/components/Article';
-
 import Section from 'grommet/components/Section';
-
-
-
 import Headline from 'grommet/components/Headline';
+
 
 import DataSectionComponent from './data-section.component/data-section.component';
 import DataStore from '../stores/DataStore';
@@ -16,18 +14,20 @@ import * as DataActions from '../actions/DataActions';
 import SplashScreenComponent from "./splash-screen.component";
 
 
-
 export default class IndexCompany extends Component {
 
- constructor() {
+  constructor() {
     super();
 
 
+    this.getCompanyNames = this.getCompanyNames.bind(this);
 
-   this.getCompanyNames = this.getCompanyNames.bind(this);
+    DataStore.on('company_names_changed', this.getCompanyNames)
 
-   this.state = {
-      companyNames : DataStore.getCompanyNames(),
+    DataActions.fetchCompanyNames();
+
+    this.state = {
+      companyNames: DataStore.getCompanyNames(),
     }
   }
 
@@ -35,10 +35,7 @@ export default class IndexCompany extends Component {
    * Will be executed when the component is rendered
    */
   componentWillMount() {
-     // Initialisation EventListener for Change of CompanyNames
-    DataStore.on('company_names_changed', this.getCompanyNames);
-    //Fetch CompanyNames to be able to render the Website
-    DataActions.fetchCompanyNames();
+
   }
 
   /**
@@ -54,30 +51,31 @@ export default class IndexCompany extends Component {
   /**
    * Gets the names of the companies and pushes them into the component's state
    */
-  getCompanyNames(){
+  getCompanyNames() {
     this.setState({
       companyNames: DataStore.getCompanyNames()
     });
   }
 
+  handleClick() {
+    window.scrollTo(500);
+    const companyPart = ReactDOM.findDOMNode(this.refs.companies);
+    console.log(companyPart.offsetTop);
+
+  }
+
   render() {
     return (
-      <Article scrollStep={true}>
+      <Article scrollStep={true} controls={true}>
 
-        <Section pad='large'
+        <Section pad="none"
+                 margin="none"
                  justify='center'
                  full='vertical'
-                 texture="img/big-ben.jpg"
+                 texture="img/big-ben1.jpg"
         >
-          <SplashScreenComponent/>
-        </Section>
 
-        <Section pad='medium'
-                 justify='center'
-                 full='vertical'
-                  >
-
-            <DataSectionComponent companies ={this.state.companyNames}/>
+          <SplashScreenComponent onClick={() => window.scrollTo(500, 500)}/>
         </Section>
 
         <Section pad='large'
@@ -89,15 +87,26 @@ export default class IndexCompany extends Component {
             Section 3
           </Headline>
         </Section>
+
+          <Section pad="none"
+                   margin="none"
+                   full='vertical'
+                   ref="companies"
+          >
+            <DataSectionComponent companies={this.state.companyNames}/>
+          </Section>
+
+
         <Section pad='large'
                  justify='center'
                  align='center'
                  full='vertical'
-                 >
+        >
           <Headline margin='none'>
             Section 4
           </Headline>
         </Section>
+
         <Section pad='large'
                  justify='center'
                  align='center'

@@ -11,6 +11,7 @@ class DataStore extends EventEmitter {
     this.interval = null;
     this.companyData = [];
     this.companyInfo = {};
+    this.companyMax={};
 
     this.databaseData = {
       stats: {},
@@ -32,8 +33,10 @@ class DataStore extends EventEmitter {
       case "FETCH_COMPANY_NAMES" :
         this.fetchCompanyNames(action.data);
         break;
+      case "FETCH_COMPANY_MAX":
+        this.fetchCompanyMax(action.data);
+        break;
       case "FETCH_COMPANY_DATA":
-
         this.fetchCompanyData(action.data, param1);
         break;
       case "FETCH_COMPANY_INFO":
@@ -81,6 +84,10 @@ class DataStore extends EventEmitter {
     {
       return this.databaseData.log;
     }
+    getMax()
+    {
+      return this.companyMax;
+    }
 
 
     /**
@@ -90,10 +97,8 @@ class DataStore extends EventEmitter {
      */
     fetchCompanyData(data, symbol)
     {
-
         this.companyData[symbol.toUpperCase()] = data;
         this.emit('data_changed_' + symbol.toUpperCase());
-
     }
     /**
      * Sets Store, when new data ist arriving and informs listener
@@ -103,6 +108,15 @@ class DataStore extends EventEmitter {
     {
       this.companyNames = (data);
       this.emit('company_names_changed');
+    }
+    /**
+     * Sets MAX and MIN values of all Companies
+     * @param data Data from Action
+     */
+    fetchCompanyMax(data)
+    {
+      this.companyMax = (data);
+      this.emit('company_max_changed');
     }
 
     /**
@@ -115,11 +129,6 @@ class DataStore extends EventEmitter {
       this.companyInfo[symbol.toUpperCase()] = data;
       this.emit('info_changed_' + symbol.toUpperCase());
     }
-
-
-
-
-
 
     fetchDatabaseLog(data)
     {
