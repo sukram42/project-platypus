@@ -5,6 +5,19 @@
 const express = require('express');
 const router = express.Router();
 
+const log4js = require('log4js');
+
+/**
+ * Sets Environment variables and connects to config script
+ * @type {*}
+ */
+var env = process.env.NODE_ENV || 'development';
+const config = require('../config')[env];
+
+log4js.configure(config.log);
+const logger = log4js.getLogger('datalog','console');
+
+
 const model = require('./model');
 const database = require('./database');
 
@@ -30,7 +43,7 @@ router.get('/database/buildinfo', (req, res) => {
  *  GET | GET DatabaseLog
  */
 router.get('/database/stats', (req, res) => {
-  console.log("Request on route /database/stats");
+  logger.info("Request on route /database/stats");
   database.getStats().then(
     (data) => res.status(200).send(data)
     , (err) => res.status(500).send(err));
@@ -41,7 +54,7 @@ router.get('/database/stats', (req, res) => {
  *  GET | TESTS API
  */
 router.get('/', (req, res) => {
-  console.log("Request on route /");
+  logger.info("Request on route /");
   res.status(200).send('api works');
 });
 
@@ -49,7 +62,7 @@ router.get('/', (req, res) => {
  *  GET | COMPANIES
  */
 router.get('/companies', (req, res) => {
-  console.log("Request on route /companies");
+  logger.info("Request on route /companies");
   model.getAll().then(promiseData => {
     promiseData.subscribe(data => {
       res.status(200).send(data);
@@ -58,10 +71,19 @@ router.get('/companies', (req, res) => {
 });
 
 /**
+ *  GET | HIGH AND MIN
+ */
+router.get('/companies/max', (req, res) => {
+  logger.info("Request on route /companies/max");
+  model.getMaxAndMin().then((data) => res.send(data), (err) => res.send(err));
+});
+
+
+/**
  *  GET | COMPANY NAMES
  */
 router.get('/companies/names', (req, res) => {
-  console.log("Request on route /companies/names");
+  logger.info("Request on route /companies/names");
   model.getCompanyNames().then((data) => res.send(data), (err) => res.send(err));
 });
 
@@ -69,7 +91,7 @@ router.get('/companies/names', (req, res) => {
  *  GET | COMPANY DATA
  */
 router.get('/companies/:companyId', async (req, res) => {
-  console.log("Request on route /:companyId");
+  logger.info("Request on route /:companyId");
   let company = req.params.companyId.toUpperCase();
 
   let count = req.query.count;
