@@ -72,7 +72,7 @@ export default class IndexCompany extends Component {
                  margin="none"
                  justify='center'
                  full='vertical'
-                 texture="img/big-ben1.jpg"
+                 texture="img/big-ben_small.jpg"
         >
 
           <SplashScreenComponent onClick={() => window.scrollTo(500, 500)}/>
