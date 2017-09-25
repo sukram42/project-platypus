@@ -11,7 +11,8 @@ import DataStore from '../stores/DataStore';
 
 
 import * as DataActions from '../actions/DataActions';
-import SplashScreenComponent from "./splash-screen.component";
+import SplashScreenComponent from "./index.component/splash-screen.component";
+import OverviewComponent from "./index.component/overview.component";
 
 
 export default class IndexCompany extends Component {
@@ -66,7 +67,7 @@ export default class IndexCompany extends Component {
 
   render() {
     return (
-      <Article scrollStep={true} controls={true}>
+      <Article scrollStep={true} controls={true} style={{"overflow":"hidden"}}>
 
         <Section pad="none"
                  margin="none"
@@ -78,17 +79,17 @@ export default class IndexCompany extends Component {
           <SplashScreenComponent onClick={() => window.scrollTo(500, 500)}/>
         </Section>
 
-        <Section pad='large'
-                 justify='center'
-                 align='center'
-                 full='vertical'
-                 colorIndex='grey-4'>
-          <Headline margin='none'>
-            Section 3
-          </Headline>
+        <Section
+            pad="none"
+            justify='center'
+            margin="none"
+            full='vertical'
+            colorIndex="accent-3">
+          <OverviewComponent />
         </Section>
 
           <Section pad="none"
+                   justify='center'
                    margin="none"
                    full='vertical'
                    ref="companies"
