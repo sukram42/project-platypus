@@ -91,7 +91,6 @@ exports.getMaxAndMin = async function () {
   return result;
 }
 
-
 /**
  * returns the names of companies in the database
  * @returns {Promise.<TResult>}

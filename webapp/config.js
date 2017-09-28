@@ -25,6 +25,10 @@ var config = {
       passwort: 'sd',
       maintable: 'sharevalues'
     },
+    certs:{
+      key: 'certs/key.pem',
+      cert: 'certs/cert.pem'
+    },
     //server details
     server: {
       host: '127.0.0.1',
@@ -50,6 +54,10 @@ var config = {
       user: 'dbadmin',
       passwort: 'sd',
       maintable: 'sharevalues'
+    },
+    certs:{
+        key: 'certs/key.pem',
+        cert: 'certs/cert.pem'
     },
     server: {
       host: '127.0.0.1',

@@ -62,3 +62,6 @@ dist/
 
 #Idea folder
 .idea
+
+#certs
+.pem
