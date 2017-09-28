@@ -64,4 +64,4 @@ dist/
 .idea
 
 #certs
-.pem
+*.pem
