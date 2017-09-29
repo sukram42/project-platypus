@@ -16,34 +16,35 @@ var standardURL = "https://api.iextrading.com/1.0/stock/%#company#%/quote";//?fi
 var exports = module.exports = {};
 
 log4js.configure(config.log);
-const logger = log4js.getLogger('datalog','console');
+const logger = log4js.getLogger('datalog', 'console');
 
 
 var connection;
 var iteration = 0;
 
-var database =  process.env.database ||config.database.db;
-var host =  process.env.host || config.database.host;
-var user =  process.env.user || config.database.user;
-var password = process.env.password ||config.database.password;
+var database = process.env.database || config.database.db;
+var host = process.env.host || config.database.host;
+var user = process.env.user || config.database.user;
+var password = process.env.password || config.database.password;
 
 logger.info("Connect to " + host);
 logger.info("Database " + database);
 logger.info("NODE_ENV: " + env);
 
-exports.connectDatabase = function() {
+exports.connectDatabase = function () {
     logger.info("Connect to Database");
     return connection = Vertica.connect({
         host,
         user,
         password,
         database
-    }, (err) =>  {
-        if(err){
-            logger.fatal("DATABASE ERROR:",err);
+    }, (err) => {
+        if (err) {
+            logger.fatal("DATABASE ERROR:", err);
             logger.fatal("EXECUTION STOPPED");
             process.exit();
-        }});
+        }
+    });
 }
 
 
@@ -55,23 +56,20 @@ exports.connectDatabase = function() {
 
 
 
- exports.initDB = function() {
-    exports.dropTable()
-        .then(() => {
-            return exports.createDatabase();
-        }).then(()=> {
-            logger.info("Initialized");
-    });
+exports.initDB = async function () {
+    await exports.dropTable();
+    logger.info("Initialized");
+    return exports.createDatabase();
 }
 
- exports.dropTable = function() {
+exports.dropTable = function () {
     logger.info("DROP TABLE");
     let query = "DROP TABLE IF EXISTS " + config.database.maintable;
 
     return exports.doQuery(query);
 }
 
- exports.createDatabase = function() {
+exports.createDatabase = function () {
     let query = "CREATE TABLE IF NOT EXISTS " + config.database.maintable +
         "(timestamp TIMESTAMP" +
         ", price numeric(5,2)" +
@@ -81,15 +79,15 @@ exports.connectDatabase = function() {
         ",delayedPriceTime timestamp" +
         ",symbol varchar(6)" +
         ",PRIMARY KEY(symbol,timestamp));";
-        logger.info("CREATE NEW TABLE");
-    return exports.doQuery(query,true);
+    logger.info("CREATE NEW TABLE");
+    return exports.doQuery(query, true);
 }
 
 
- exports.doQuery = function(query) {
+exports.doQuery = function (query) {
     return new Promise((resolve, reject) => {
-        connection.query(query,(err, result)=> {
-            if (err)reject(err)
+        connection.query(query, (err, result) => {
+            if (err) reject(err)
             else resolve(result);
         });
     });
@@ -104,7 +102,7 @@ exports.connectDatabase = function() {
 /**
  * Fetches Data from the API
  */
- exports.getData = function() {
+exports.getData = function () {
 
     iteration++;
     logger.info("Iteration " + iteration + " starting");
@@ -114,7 +112,7 @@ exports.connectDatabase = function() {
 /**
  * Generates the API URLs
  */
- exports.getURLs = function() {
+exports.getURLs = function () {
     let urls = [];
 
     config.datamining.symbols.forEach(company => {
@@ -128,7 +126,7 @@ exports.connectDatabase = function() {
  * Fetches the information from the API
  * @param urls
  */
- exports.fetchData = function(urls) {
+exports.fetchData = function (urls) {
 
     urls.forEach(url => {
         requestify.get(url).then(response => {
@@ -140,7 +138,7 @@ exports.connectDatabase = function() {
     });
 }
 
- exports.saveInDb = function(body) {
+exports.saveInDb = function (body) {
     var values = {
         "symbol": body.symbol,
         "price": body.latestPrice,
@@ -160,8 +158,9 @@ exports.connectDatabase = function() {
         + values.delayedPrice + ",'"
         + values.delayedPriceTime + "','"
         + values.symbol + "');commit;";
-    
-    return exports.doQuery(querys,true).then(()=>{},err => logger.error(err));
+
+    return exports.doQuery(querys, true).then(() => {
+    }, err => logger.error(err));
 }
 
 /**

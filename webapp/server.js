@@ -14,6 +14,15 @@ var env = process.env.NODE_ENV || 'development';
 const config = require('./config')[env];
 
 
+
+log4js.configure(config.log);
+const logger = log4js.getLogger('datalog', 'console');
+
+
+const api = require('./server/api');
+
+
+
 let files = {};
 fs.readdir('dist', (error, data) => {
 
@@ -29,14 +38,6 @@ fs.readdir('dist', (error, data) => {
   })
 
 })
-console.log(files);
-
-
-log4js.configure(config.log);
-const logger = log4js.getLogger('datalog', 'console');
-
-
-const api = require('./server/api');
 
 const cert = fs.readFileSync(path.join(__dirname, config.certs.cert)),
       key = fs.readFileSync(path.join(__dirname, config.certs.key));
@@ -62,6 +63,9 @@ app.use('/api', api);
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist/index.html'));
 });
+
+
+
 
 
 const server = http2.createServer({cert, key}, app);

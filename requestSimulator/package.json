@@ -1,0 +1,22 @@
+{
+  "name": "requestsimulator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.15.5",
+    "http": "0.0.0",
+    "log4js": "^2.3.4",
+    "path": "^0.12.7",
+    "request": "^2.83.0",
+    "spdy": "^3.4.7",
+    "vertica": "^0.5.5"
+  }
+}
