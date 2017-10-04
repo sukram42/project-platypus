@@ -8,11 +8,11 @@ import Headline from 'grommet/components/Headline';
 
 import DataSectionComponent from './data-section.component/data-section.component';
 import DataStore from '../stores/DataStore';
-
-
 import * as DataActions from '../actions/DataActions';
+
 import SplashScreenComponent from "./index.component/splash-screen.component";
 import OverviewComponent from "./index.component/overview.component";
+import RequestSectionComponent from "./request-section.component/request-section.component";
 
 
 export default class IndexCompany extends Component {
@@ -23,7 +23,7 @@ export default class IndexCompany extends Component {
 
     this.getCompanyNames = this.getCompanyNames.bind(this);
 
-    DataStore.on('company_names_changed', this.getCompanyNames)
+    DataStore.on('company_names_changed', this.getCompanyNames);
 
     DataActions.fetchCompanyNames();
 
@@ -62,14 +62,13 @@ export default class IndexCompany extends Component {
     window.scrollTo(500);
     const companyPart = ReactDOM.findDOMNode(this.refs.companies);
     console.log(companyPart.offsetTop);
-
   }
 
   render() {
     return (
-      <Article scrollStep={true} controls={true} style={{"overflow":"hidden"}}>
-
+      <Article scrollStep={true} controls={true} style={{"overflow":"hidden" }}>
         <Section pad="none"
+                 style={{"background-attachment": "fixed"}}
                  margin="none"
                  justify='center'
                  full='vertical'
@@ -89,6 +88,7 @@ export default class IndexCompany extends Component {
         </Section>
 
           <Section pad="none"
+
                    justify='center'
                    margin="none"
                    full='vertical'
@@ -103,9 +103,7 @@ export default class IndexCompany extends Component {
                  align='center'
                  full='vertical'
         >
-          <Headline margin='none'>
-            Section 4
-          </Headline>
+          <RequestSectionComponent/>
         </Section>
 
         <Section pad='large'
