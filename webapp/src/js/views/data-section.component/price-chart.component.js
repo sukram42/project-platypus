@@ -109,6 +109,7 @@ export default class PriceChartComponent extends Component {
     return (
       <Row>
         <Col sm={1} xl={1} xs={1}/>
+        {/*Chart*/}
         <Col sm={6} xl={6} xs={10}
         >
           <Chart style={{"width": "100%"}}>
@@ -125,12 +126,13 @@ export default class PriceChartComponent extends Component {
 
               <Base style={{"width": "100%"}}/>
               <Layers>
-                <Grid rows={7}
-                      columns={5}/>
+                {/*<Grid rows={7}*/}
+                      {/*columns={5}/>*/}
                 <Line values={priceArray}
                       smooth={true}
                       max={maxVal + puffer}
                       min={minVal - puffer}
+
                       colorIndex='accent-2'
                       activeIndex={markerPos}/>
                 <Marker colorIndex='graph-2'

@@ -15,7 +15,7 @@ export const POLLING_TIME = config.polling;
  * FETCHING OF COMPANY NAMES IN THE DATABASE
  */
 export function fetchCompanyNames() {
-  let url = (env == 'development' ? "http://" + config.server.host + ":" + config.server.port + "/" : "") + "api/companies/names";
+  let url = (env == 'development' ? "https://" + config.server.host + ":" + config.server.port + "/" : "") + "api/companies/names";
   axios.get(url)
     .then(response => {
       dispatcher.dispatch({
@@ -35,7 +35,7 @@ export function fetchCompanyData(symbol) {
   const count = 30;
 
 
-  let url = (env == 'development' ? "http://" + config.server.host + ":" + config.server.port + "/" : "") + "api/companies/" + symbol + "?count=" + count;
+  let url = (env == 'development' ? "https://" + config.server.host + ":" + config.server.port + "/" : "") + "api/companies/" + symbol + "?count=" + count;
   axios.get(url)
     .then(response => {
       dispatcher.dispatch({
@@ -87,7 +87,7 @@ export function fetchCompanyInformation(symbol) {
  * @param symbol
  */
 export function fetchMaxAndMin() {
-  axios.get((env == 'development' ? "http://" + config.server.host + ":" + config.server.port + "/" : "") + 'api/companies/max')
+  axios.get((env == 'development' ? "https://" + config.server.host + ":" + config.server.port + "/" : "") + 'api/companies/max')
     .then(response => {
       dispatcher.dispatch({
         "type": 'FETCH_COMPANY_MAX',

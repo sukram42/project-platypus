@@ -68,7 +68,7 @@ export default class IndexCompany extends Component {
     return (
       <Article scrollStep={true} controls={true} style={{"overflow":"hidden" }}>
         <Section pad="none"
-                 style={{"background-attachment": "fixed"}}
+                 style={{"backgroundAttachment": "fixed"}}
                  margin="none"
                  justify='center'
                  full='vertical'

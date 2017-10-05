@@ -106,6 +106,7 @@ export default class CompanyDashboardComponent extends Component {
       <Box pad={{"between": "medium", "vertical": "medium"}}>
         <Row>
           <Col xl={1} sm={1} xs={1}/>
+          {/*Picture*/}
           <Col xl={2} sm={2} xs={0}>
             <Box align="start">
               <Image size="small"
@@ -114,7 +115,8 @@ export default class CompanyDashboardComponent extends Component {
               />
             </Box>
           </Col>
-          <Col xl={6} sm={7} xs={10} style={{"paddingTop": "2%"}}>
+          {/*Headings*/}
+          <Col xl={5} sm={7} xs={10} style={{"paddingTop": "2%"}}>
             <Box align="start" style={{"textAlign": "left"}}>
               <Heading tag="h1">
                 {companyInformation ? this.state.companyInformation.companyName : ""}
@@ -132,6 +134,7 @@ export default class CompanyDashboardComponent extends Component {
               </Visible>
             </Box>
           </Col>
+          {/*Information Button */}
           <Col xl={2} sm={1} xs={0} style={{"paddingTop": "2%"}}>
             <Box >
               <Visible xl>
