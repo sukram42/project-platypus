@@ -26,8 +26,12 @@ services:
         image: "sukram42/jmmaster"
         volumes:
          - ./JMeter_Docker/tests/steptest.jmx:/etc/tests/steptest.jmx
+         - ./JMeter_Docker/plugins/jmeter-plugins-casutg-2.1.jar:/jmeter/apache-jmeter-3.3/lib/jmeter-plugins-casutg-2.1.jar
         tty: true
+        network_mode: "host"
     
     jmserver:
-        image: "sukram42/jmserver"
-        
+        image: "sukram42/jmserver" 
+        volumes:
+            - ./JMeter_Docker/plugins/jmeter-plugins-casutg-2.1.jar:/jmeter/apache-jmeter-3.3/lib/jmeter-plugins-casutg-2.1.jar
+        network_mode: "host"

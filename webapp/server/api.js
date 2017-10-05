@@ -105,6 +105,7 @@ router.get('/companies/:companyId', async (req, res) => {
       res.status(200).send(await model.getCompanyInformation(company, count));
     else res.status(500).send("WRONG PARAMETERS");
   } catch (err) {
+    logger.log("hallo");
     res.send(err);
   }
 

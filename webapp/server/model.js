@@ -20,14 +20,20 @@ const config = require('../config')[env];
 
 
 log4js.configure(config.log);
-const logger = log4js.getLogger('datalog','console');
+const logger = log4js.getLogger('datalog', 'console');
 
 
 var exports = module.exports = {};
 
-exports.getAll = function () {
+exports.getAll = async function () {
   let query = "SELECT * FROM " + config.database.maintable;
-  return get(query);
+  try {
+    let result = await get(query);
+    return result;
+  } catch (err) {
+    logger.error("GET ALL",err);
+    return null;
+  }
 }
 
 /**
@@ -38,7 +44,7 @@ exports.getAll = function () {
  * @param unit  the unit like hours/minutes
  * @returns {*}
  */
-exports.getCompanyInformation = function (symbol, amount, unit) {
+exports.getCompanyInformation = async function (symbol, amount, unit) {
   if (!amount || !unit) {
     return new Promise((res, rej) => rej("WRONG PARAMETERS GIVEN"));
   }
@@ -49,9 +55,13 @@ exports.getCompanyInformation = function (symbol, amount, unit) {
     let overQuery = " OVER(PARTITION by companyQuery.symbol ORDER BY timestamp);";
     let timeseriesQuery = "TIMESERIES slice_time AS " + slicing + " ";
     let query = " SELECT slice_time as timestamp, TS_LAST_VALUE(price) as price ,TS_LAST_VALUE(volume) as volume , TS_LAST_VALUE(change) as change,TS_LAST_VALUE(delayedPrice) as delayedPrice ,TS_LAST_VALUE(delayedPriceTime) AS delayedPriceTime FROM " + companyQuery + timeseriesQuery + overQuery;
-
-
-    return get(query, true);
+    try {
+      let result = await get(query, true);
+      return result;
+    } catch (err) {
+      logger.error("getCompanyInformation",err);
+      return null;
+    }
   } else return null;
 }
 
@@ -75,9 +85,17 @@ exports.getCompanyInformation = async function (symbol, count) {
       let timeseriesQuery = "TIMESERIES slice_time AS '" + interval.hours + ":" + interval.minutes + ":" + interval.seconds + "'";
       let query = " SELECT slice_time as timestamp, TS_LAST_VALUE(price) as price ,TS_LAST_VALUE(volume) as volume , TS_LAST_VALUE(change) as change,TS_LAST_VALUE(delayedPrice) as delayedPrice ,TS_LAST_VALUE(delayedPriceTime) AS delayedPriceTime FROM " + companyQuery + timeseriesQuery + overQuery;
 
+      try {
+        let result = await get(query, true);
 
-      let result = await get(query, true);
-      return result;
+        return result;
+
+
+      } catch (err) {
+
+        logger.error(err);
+        return null;
+      }
     } else return null;
   } else return {err: "Count too high "}
 }
@@ -85,10 +103,15 @@ exports.getCompanyInformation = async function (symbol, count) {
 exports.getMaxAndMin = async function () {
   query = "SELECT symbol, MAX(price), MIN(price) from " + config.database.maintable + " GROUP BY symbol";
 
-  let queryResult = await get(query, true);
-  let result={};
-    queryResult.map(item=>(result[item.symbol]={"min":item.MAX,"max":item.MIN}));
-  return result;
+  try {
+
+    let queryResult = await get(query, true);
+    let result = {};
+    queryResult.map(item => (result[item.symbol] = {"min": item.MAX, "max": item.MIN}));
+    return result;
+  } catch (err) {
+    return null;
+  }
 }
 
 /**
@@ -101,7 +124,7 @@ exports.getCompanyNames = function () {
     let erg = [];
     data.rows.map(item => erg.push(item[0]));
     return erg;
-  });
+  }).catch((err) => logger.error(err));
 }
 
 /**
@@ -111,21 +134,29 @@ exports.getCompanyNames = function () {
  * @returns {Promise.<TResult>}
  */
 function get(query, asJSON) {
+  try {
   return new Promise((resolve, reject) => {
+
     let connection = connectDatabase();
     connection.query(query, (err, result) => {
-      err ? reject(err) : resolve(result, connection);
       try {
         connection.disconnect();
       } catch (err) {
-        logger.error(err)
+        logger.error("NOT DISCONNECTED:",err)
       }
+      err ? reject(err) : resolve(result, connection);
     });
-
-  }).then(
+  })
+    .then(
     (result) => {
       return asJSON ? (jsonfy(result)) : result;
+    })
+    .catch(err => {
+      logger.error("Error", err);
     });
+  }catch(err){
+    logger.error("TRY GET:",err);
+  }
 }
 
 /**
@@ -139,7 +170,7 @@ function connectDatabase() {
     password: config.database.password,
     database: config.database.database
   }, (err) => {
-    if (err) logger.error(err)
+    if (err) throw err;
   });
 }
 
