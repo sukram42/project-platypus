@@ -6,3 +6,14 @@ input[type=range][orient=vertical]
   height: 175px;
   padding: 0 5px;
 }
+
+.grommetux-carousel__track,
+.grommetux-carousel__track--animate
+{
+  height: 100%;
+}
+
+grommetux-chart-hot-spots__band--active
+{
+
+}

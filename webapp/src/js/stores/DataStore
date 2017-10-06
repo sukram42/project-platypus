@@ -75,15 +75,7 @@ class DataStore extends EventEmitter {
       return this.companyData[symbol.toUpperCase()];
     }
 
-    getDatabaseData()
-    {
-      return this.databaseData;
-    }
 
-    getDatabaseLog()
-    {
-      return this.databaseData.log;
-    }
     getMax()
     {
       return this.companyMax;
@@ -130,11 +122,6 @@ class DataStore extends EventEmitter {
       this.emit('info_changed_' + symbol.toUpperCase());
     }
 
-    fetchDatabaseLog(data)
-    {
-      this.databaseData.log = (data);
-      this.emit('database_log_changed');
-    }
 
     fetchDatabaseBuildInfo(data)
     {
@@ -147,6 +134,9 @@ class DataStore extends EventEmitter {
       this.databaseData.stats = (data);
       this.emit('database_changed');
     }
+
+
+
 }
 
 

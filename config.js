@@ -16,7 +16,7 @@ var standards = {
         interval: 5000,
         symbols: ["AAPL", "HPE", "IBM", "DXC", "DVMT", "CSCO", "INTC", "SAP", "ORCL"]
     },
-    polling: 5000
+    polling: 10000
 }
 
 var config = {

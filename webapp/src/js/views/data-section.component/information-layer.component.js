@@ -6,6 +6,7 @@ import React, {Component} from 'react';
 
 
 import Layer from 'grommet/components/Layer';
+import Animate from 'grommet/components/Animate';
 import Box from 'grommet/components/Box';
 import Image from 'grommet/components/Image';
 import Heading from 'grommet/components/Heading';
@@ -19,30 +20,34 @@ export default class InformationLayerComponent extends Component {
 
   }
 
+
   render() {
     let information = this.props.information;
 
     return (
-      <Layer flush={false}
-             closer={true}
-             align='right'
-             onClose={this.props.onClose}
-      >
+      <Animate enter={{"animation": "slide-left", "duration": 1000, "delay": 0}}
+               keep={true} visible={this.props.visible}>
+        <Layer flush={true}
+               closer={true}
+               align='right'
+               onClose={this.props.onClose}
+        >
 
-        <Box align="center" pad="medium">
-          <Image size="small"
-                 src={'https://storage.googleapis.com/iex/api/logos/' + information.symbol + '.png'}
-                 style={{"borderRadius": "50%"}}/>
-          <Heading uppercase={true}
-                   truncate={false}
-                   strong={false}
-                   align='center'
-                   margin="medium">
-            {information.companyName.length<20?information.companyName:information.symbol}
-          </Heading>
-          <CompanyInformationTabComponent item={information}/>
-        </Box>
-      </Layer>
+          <Box align="center" pad="medium">
+            <Image size="small"
+                   src={'https://storage.googleapis.com/iex/api/logos/' + information.symbol + '.png'}
+                   style={{"borderRadius": "50%"}}/>
+            <Heading uppercase={true}
+                     truncate={false}
+                     strong={false}
+                     align='center'
+                     margin="medium">
+              {information.companyName.length < 20 ? information.companyName : information.symbol}
+            </Heading>
+            <CompanyInformationTabComponent item={information}/>
+          </Box>
+        </Layer>
+      </Animate>
     );
   }
 }

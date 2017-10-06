@@ -6,6 +6,7 @@ import Section from 'grommet/components/Section';
 import Headline from 'grommet/components/Headline';
 
 
+
 import DataSectionComponent from './data-section.component/data-section.component';
 import DataStore from '../stores/DataStore';
 import * as DataActions from '../actions/DataActions';
@@ -88,32 +89,13 @@ export default class IndexCompany extends Component {
         </Section>
 
           <Section pad="none"
-
-                   justify='center'
+                   // justify='center'
                    margin="none"
                    full='vertical'
                    ref="companies"
           >
             <DataSectionComponent companies={this.state.companyNames}/>
           </Section>
-
-
-        <Section pad='large'
-                 justify='center'
-                 align='center'
-                 full='vertical'
-        >
-          <RequestSectionComponent/>
-        </Section>
-
-        <Section pad='large'
-                 justify='center'
-                 align='center'
-                 full='vertical'>
-          <Headline margin='none'>
-            Section 5
-          </Headline>
-        </Section>
       </Article>
     );
   }

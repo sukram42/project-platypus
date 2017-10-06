@@ -9,20 +9,26 @@ import Heading from 'grommet/components/Heading';
 import Image from 'grommet/components/Image';
 import Box from 'grommet/components/Box';
 import Button from 'grommet/components/Button';
+import Value from 'grommet/components/Value';
 import Responsive from 'grommet/utils/Responsive';
 
 import DataStore from '../../stores/DataStore';
 
 
+import LinkUp from 'grommet/components/icons/base/LinkUp';
+import LinkDown from 'grommet/components/icons/base/LinkDown';
+
 import * as DataActions from '../../actions/DataActions';
-import PriceChartComponent from "./price-chart.component";
 
 import Info from 'grommet/components/icons/base/Info';
 
+import Moment from 'moment';
 
 import InformationLayerComponent from "./information-layer.component";
 
-import {Hidden, Row, Col, Visible} from "react-grid-system";
+import {Hidden, Container, Row, Col, Visible} from "react-grid-system";
+
+import Chart, {Axis, Marker, HotSpots, Base, Grid, Line, Layers, MarkerLabel} from 'grommet/components/Chart';
 
 export default class CompanyDashboardComponent extends Component {
 
@@ -42,7 +48,20 @@ export default class CompanyDashboardComponent extends Component {
       companyName: "",
       companyData: [],
       show: false,
-      markerPos: undefined,
+      change: 0,
+      volume: 0,
+      maxVal: 0,
+      minVal: 10000000,
+      priceArray: [],
+      puffer: 0.25,//Space to the bottom and top of chart
+      markerPos: 0,//Position of the Marker
+      dateOptions: {
+        "day": "2-digit",
+        "month": "2-digit",
+        "year": "2-digit",
+        "hour": "numeric",
+        "minute": "numeric"
+      }
     }
   }
 
@@ -61,6 +80,14 @@ export default class CompanyDashboardComponent extends Component {
     this.responsive = Responsive.start(this.onResponsive);
     this.state.interval = DataActions.startCompanyPolling(this.props.company);
     DataActions.fetchCompanyInformation(this.props.company);
+  }
+
+  componentWillMount() {
+    this.getPriceArray();
+  }
+
+  componentWillUpdate(_, nextState) {
+
   }
 
   // shouldComponentUpdate(nextProps, nextState) {
@@ -84,6 +111,12 @@ export default class CompanyDashboardComponent extends Component {
     this.setState({
       companyData: DataStore.getCompanyData(this.props.company)
     });
+
+    this.setState({
+      maxVal: 0,
+      minVal: 10000000,
+      priceArray: []
+    }, () => this.getPriceArray());
   }
 
 
@@ -93,18 +126,62 @@ export default class CompanyDashboardComponent extends Component {
     })
   }
 
+  getPriceArray(nextState) {
+
+    let state = nextState || this.state;
+
+    let items = state.companyData;
+
+    this.state.itemLength = items.length;
+
+    this.setState({items});
+
+    let minVal = this.state.minVal;
+    let maxVal = this.state.maxVal;
+
+    let prices = items.map((item) => {
+
+      let price = item.price;
+      if (price < minVal) minVal = price;
+      if (price > maxVal) maxVal = price;
+      return price;
+    });
+    if (prices !== this.state.priceArray)
+      this.setState({priceArray: prices, minVal, maxVal})
+
+    return prices;
+  }
+
 
   render() {
     let companyInformation = this.state.companyInformation;
     let show = this.state.show;
-    // let markerPos = this.state.markerPos;/*
-    let markerPos = 0;
+    let markerPos = this.state.markerPos;
     let small = this.state.small;
+    let max = this.state.companyInformation && this.props.max ? this.props.max[this.state.companyInformation.symbol] : 0;
+    let change = 0;
+    let volume = 0;
+
+
+    let priceArray = this.state.priceArray;
+    let items = this.state.items;
+    let length = priceArray.length;
+    let puffer = this.state.puffer;
+    let minVal = this.state.minVal;
+    let maxVal = this.state.maxVal;
+    let options = this.state.dateOptions;
+
+    try {
+      change = (items[markerPos] ? +items[markerPos].change : items[length - 1].change);
+      volume = items[markerPos] ? +items[markerPos].volume : items[length - 1].volume;
+    } catch (e) {
+    }
 
 
     return (
-      <Box pad={{"between": "medium", "vertical": "medium"}}>
-        <Row>
+
+      <Box style={{"width": "100%", "height": "100%"}} justify="around" pad={{"vertical":"large"}}>
+        <Row >
           <Col xl={1} sm={1} xs={1}/>
           {/*Picture*/}
           <Col xl={2} sm={2} xs={0}>
@@ -116,7 +193,7 @@ export default class CompanyDashboardComponent extends Component {
             </Box>
           </Col>
           {/*Headings*/}
-          <Col xl={5} sm={7} xs={10} style={{"paddingTop": "2%"}}>
+          <Col xl={6} sm={7} xs={10} style={{"paddingTop": "2%"}}>
             <Box align="start" style={{"textAlign": "left"}}>
               <Heading tag="h1">
                 {companyInformation ? this.state.companyInformation.companyName : ""}
@@ -158,17 +235,119 @@ export default class CompanyDashboardComponent extends Component {
           <Col xl={1} sm={1} xs={1}/>
         </Row>
 
-        <PriceChartComponent small={small}
-                             max={this.state.companyInformation && this.props.max ? this.props.max[this.state.companyInformation.symbol] : 0}
-                             values={this.state.companyData}
-        />
+
+        <Row>
+          <Col sm={1} xl={1} xs={1}/>
+          {/*Chart*/}
+          <Col sm={10} xl={10} xs={10}>
+            <Chart style={{"width": "100%"}}>
+              <Chart vertical={true} style={{"width": "100%"}}>
+                {/*<MarkerLabel count={length}*/}
+                {/*index={markerPos}*/}
+                {/*label={<Value value={(priceArray[markerPos] || priceArray[length - 1] ) + " $"}/>}/>*/}
+                {/*<MarkerLabel count={length}*/}
+                {/*index={markerPos}*/}
+                {/*label={items[markerPos] ? Moment(items[markerPos].timestamp).format('DD/MM/YYYY h:mm A') : ""}/>*/}
+
+                <Base style={{"width": "100%"}}/>
+                <Layers>
+                  <Line values={priceArray}
+                    // smooth={true}
+                        max={maxVal + puffer}
+                        min={minVal - puffer}
+                        style={{"strokeWidth": "10px"}}
+                        colorIndex='accent-1'
+                        activeIndex={markerPos}/>
+                  <Marker colorIndex='graph-2'
+                          count={length}
+                          vertical={true}
+                          index={markerPos}/>
+                  <HotSpots count={length}
+                            max={100}
+                            style={{"backgroundColor":"blue"}}
+                            activeIndex={markerPos}
+                            onActive={(index) => {
+                              this.setState({markerPos: index});
+                            }}/>
+                </Layers>
+
+
+                <Axis count={2}
+                      labels={[{
+                        "index": 0,
+                        "label": items[0] ? Moment(items[0].timestamp).format('DD/MM/YYYY h:mm A') : ""
+
+                      }
+                        , {
+                          "index": 1,
+                          "label": items[length - 1] ? Moment(items[length - 1].timestamp).format('DD/MM/YYYY h:mm A') : ""
+                        }]}/>
+              </Chart>
+              <Axis count={3}
+                    labels={[{"index": 0, "label": (minVal - puffer)}, {
+                      "index": 1,
+                      "label": items[length / 2] ? items[length / 2].price : ""
+                    }, {"index": 2, "label": (maxVal + puffer)}]}
+                    vertical={true}/>
+            </Chart>
+          </Col>
+          <Col sm={1} xl={1} xs={1}/>
+        </Row>
+
+
+        <Row>
+          <Col sm={3} xl={3} xs={3}>
+            <Value size="large"
+                   value={+change.toFixed(4)}
+                   label='Change'
+                   icon={change > 0 ? <LinkUp colorIndex='accent-2' size='large'/> :
+                     <LinkDown colorIndex='accent-2' size='large'/>}
+                   units='%'
+                   colorIndex='accent-2'
+                   align='start'
+            />
+          </Col>
+          <Col sm={3} xl={3} xs={3}>
+            <Value size="large"
+                   value={+volume}
+                   label='Volume'
+                   colorIndex='accent-2'
+                   align='start'
+            />
+          </Col>
+          <Col sm={3} xl={3} xs={3}>
+            <Visible xl>
+              <Value size="large"
+                     value={max.max}
+                     units="$"
+                     label='Highest Point'
+                     colorIndex='accent-2'
+                     align='start'
+              />
+            </Visible>
+          </Col>
+          <Col sm={3} xl={3} xs={3}>
+
+            <Visible xl>
+              <Value size="large"
+                     units="$"
+                     value={max.min}
+                     label='Lowest Point'
+                     colorIndex='accent-2'
+                     align='start'
+              />
+            </Visible>
+          </Col>
+        </Row>
+
         {show ? (
           <InformationLayerComponent onClose={() => this.setState({show: false})}
                                      information={companyInformation}
+                                     visible={show}
           />
         ) : ""}
 
-      </Box>
-    );
+      </Box>);
+
   }
 }

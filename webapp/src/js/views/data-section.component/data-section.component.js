@@ -20,8 +20,8 @@ export default class DataSectionComponent extends Component {
   constructor() {
     super();
 
-    this.state={
-      max:{}
+    this.state = {
+      max: {}
     }
 
     this.getMax = this.getMax.bind(this);
@@ -31,32 +31,34 @@ export default class DataSectionComponent extends Component {
 
 
   }
+
   componentWillUnmount() {
     DataStore.removeListener('company_max_changed', this.getMax);
   }
 
- shouldComponentUpdate(nextProps, nextState) {
-   return !this.state.max !== nextState.max
- }
+  shouldComponentUpdate(nextProps, nextState) {
+    return !this.state.max !== nextState.max
+  }
 
   getMax() {
-    this.setState({"max":DataStore.getMax()});
+    this.setState({"max": DataStore.getMax()});
   }
+
   render() {
 
     let companies = this.props.companies;
 
     return (
-      <Box >
+      <Box basis="full" pad={{"vertical": "none"}}>
         {companies && companies.length != 0 ?
-        <Carousel persistentNav ={true}>
-          {companies.map((company, index) =>
-                      <CompanyDashboardComponent max={this.state.max} key={index} company={company}/>
-                    )}
-        </Carousel>
+          <Carousel persistentNav={false} style={{"width":"100%","height":"100%"}}>
+            {companies.map((company, index) =>
+              <CompanyDashboardComponent max={this.state.max} key={index} company={company}/>
+            )}
+          </Carousel>
           :
           <Headline>
-          Sorry, It looks like, I do not have any data for you
+            Sorry, It looks like, I do not have any data for you
           </Headline>
         }
       </Box>
