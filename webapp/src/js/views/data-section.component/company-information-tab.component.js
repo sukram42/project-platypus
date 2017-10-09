@@ -7,7 +7,7 @@ import Table from 'grommet/components/Table';
 import Anchor from 'grommet/components/Anchor';
 import Box from 'grommet/components/Box';
 
-export default class CompanyInformationTabComponent extends Component {
+export default class CompanyInformationTabComponent extends React.PureComponent {
 
   render() {
     return (

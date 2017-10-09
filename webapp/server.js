@@ -69,6 +69,6 @@ app.get('*', (req, res) => {
 
 const server = http2.createServer({cert, key}, app);
 server.listen(port, () => logger.info(`API running on localhost:${port}`));
-server.on('error', () => {
-  logger.debug("hallo");
+server.on('error', (err) => {
+  logger.error("Error",err);
 });

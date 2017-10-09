@@ -1,21 +1,23 @@
 /**
  * Created by boebel on 14.09.2017.
  */
-/**
- * Created by Boebel on 04.09.2017.
- */
+'use strict';
 
 const Rx = require('rxjs/Rx');
 const Vertica = require('vertica');
 const SqlString = require('sqlstring');
 const log4js = require('log4js');
 
+const companyNamesCache = require('./company_name_cache');
+
+// TODO QUERY VARIABLE
+let querys = 0;
 
 /**
  * Sets Environment variables and connects to config script
  * @type {*}
  */
-var env = process.env.NODE_ENV || 'development';
+const env = process.env.NODE_ENV || 'development';
 const config = require('../config')[env];
 
 
@@ -28,13 +30,12 @@ var exports = module.exports = {};
 exports.getAll = async function () {
   let query = "SELECT * FROM " + config.database.maintable;
   try {
-    let result = await get(query);
-    return result;
+    return await get(query);
   } catch (err) {
-    logger.error("GET ALL",err);
+    logger.error("GET ALL", err);
     return null;
   }
-}
+};
 
 /**
  *Gives Back company information concerning a given interval.
@@ -48,7 +49,7 @@ exports.getCompanyInformation = async function (symbol, amount, unit) {
   if (!amount || !unit) {
     return new Promise((res, rej) => rej("WRONG PARAMETERS GIVEN"));
   }
-  ;
+
   if (symbol) {
     let slicing = SqlString.escape(amount + " " + unit);
     let companyQuery = "(SELECT * FROM " + config.database.maintable + " WHERE symbol LIKE " + SqlString.escape(symbol) + ") as companyQuery ";
@@ -56,14 +57,13 @@ exports.getCompanyInformation = async function (symbol, amount, unit) {
     let timeseriesQuery = "TIMESERIES slice_time AS " + slicing + " ";
     let query = " SELECT slice_time as timestamp, TS_LAST_VALUE(price) as price ,TS_LAST_VALUE(volume) as volume , TS_LAST_VALUE(change) as change,TS_LAST_VALUE(delayedPrice) as delayedPrice ,TS_LAST_VALUE(delayedPriceTime) AS delayedPriceTime FROM " + companyQuery + timeseriesQuery + overQuery;
     try {
-      let result = await get(query, true);
-      return result;
+      return await get(query, true);
     } catch (err) {
-      logger.error("getCompanyInformation",err);
+      logger.error("getCompanyInformation", err);
       return null;
     }
   } else return null;
-}
+};
 
 /**
  * Gives Back company information concerning an amount of values
@@ -86,10 +86,7 @@ exports.getCompanyInformation = async function (symbol, count) {
       let query = " SELECT slice_time as timestamp, TS_LAST_VALUE(price) as price ,TS_LAST_VALUE(volume) as volume , TS_LAST_VALUE(change) as change,TS_LAST_VALUE(delayedPrice) as delayedPrice ,TS_LAST_VALUE(delayedPriceTime) AS delayedPriceTime FROM " + companyQuery + timeseriesQuery + overQuery;
 
       try {
-        let result = await get(query, true);
-
-        return result;
-
+        return await get(query, true);
 
       } catch (err) {
 
@@ -98,10 +95,10 @@ exports.getCompanyInformation = async function (symbol, count) {
       }
     } else return null;
   } else return {err: "Count too high "}
-}
+};
 
 exports.getMaxAndMin = async function () {
-  query = "SELECT symbol, MAX(price), MIN(price) from " + config.database.maintable + " GROUP BY symbol";
+  let query = "SELECT symbol, MAX(price), MIN(price) from " + config.database.maintable + " GROUP BY symbol";
 
   try {
 
@@ -112,20 +109,29 @@ exports.getMaxAndMin = async function () {
   } catch (err) {
     return null;
   }
-}
+};
 
 /**
- * returns the names of companies in the database
- * @returns {Promise.<TResult>}
+ * eturns the names of companies in the database
+ * @returns {Promise.<erg>}
  */
-exports.getCompanyNames = function () {
-  query = "SELECT symbol from " + config.database.maintable + " GROUP BY symbol";
+exports.getCompanyNames = async function () {
+  let names = companyNamesCache.getCachedNames();
+  if (names) {
+    return new Promise((res) => {
+      logger.debug("Send by Cache");
+      res(names);
+    });
+  }
+
+  let query = "SELECT symbol from " + config.database.maintable + " GROUP BY symbol";
   return get(query).then((data) => {
     let erg = [];
     data.rows.map(item => erg.push(item[0]));
+    companyNamesCache.setCachedNames(erg);
     return erg;
   }).catch((err) => logger.error(err));
-}
+};
 
 /**
  * Get Data from Database
@@ -134,28 +140,31 @@ exports.getCompanyNames = function () {
  * @returns {Promise.<TResult>}
  */
 function get(query, asJSON) {
-  try {
-  return new Promise((resolve, reject) => {
 
-    let connection = connectDatabase();
-    connection.query(query, (err, result) => {
-      try {
-        connection.disconnect();
-      } catch (err) {
-        logger.error("NOT DISCONNECTED:",err)
-      }
-      err ? reject(err) : resolve(result, connection);
-    });
-  })
-    .then(
-    (result) => {
-      return asJSON ? (jsonfy(result)) : result;
+  logger.debug("Query NO", ++querys);
+
+  try {
+    return new Promise((resolve, reject) => {
+
+      let connection = connectDatabase();
+      connection.query(query, (err, result) => {
+        try {
+          connection.disconnect();
+        } catch (err) {
+          logger.error("NOT DISCONNECTED:", err)
+        }
+        err ? reject(err) : resolve(result, connection);
+      });
     })
-    .catch(err => {
-      logger.error("Error", err);
-    });
-  }catch(err){
-    logger.error("TRY GET:",err);
+      .then(
+        (result) => {
+          return asJSON ? (jsonfy(result)) : result;
+        })
+      .catch(err => {
+        logger.error("Error", err);
+      });
+  } catch (err) {
+    logger.error("TRY GET:", err);
   }
 }
 
@@ -164,7 +173,7 @@ function get(query, asJSON) {
  Connect to Vertica
  */
 function connectDatabase() {
-  return connection = Vertica.connect({
+  return Vertica.connect({
     host: config.database.host,
     user: config.database.user,
     password: config.database.password,

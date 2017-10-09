@@ -11,7 +11,11 @@ import Box from 'grommet/components/Box';
 
 
 
-export default class SplashScreenComponent extends Component {
+export default class SplashScreenComponent extends React.PureComponent {
+
+  shouldComponentUpdate(){
+    return false;
+  }
 
   render() {
     return (

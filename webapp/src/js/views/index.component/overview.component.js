@@ -17,11 +17,20 @@ import Texts from '../../texts';
 import {Row, Col, Container, Visible, Hidden} from "react-grid-system";
 
 
-export default class OverviewComponent extends Component {
+export default class OverviewComponent extends React.PureComponent {
+
+  shouldComponentUpdate(){
+    return false;
+  }
+  componentDidMount(){
+    console.log("mount");
+  }
 
   render() {
 
     let texts = Texts.overview;
+
+    console.log("Render Overview")
 
     return (
 

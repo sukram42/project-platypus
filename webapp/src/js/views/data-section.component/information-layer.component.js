@@ -6,18 +6,21 @@ import React, {Component} from 'react';
 
 
 import Layer from 'grommet/components/Layer';
-import Animate from 'grommet/components/Animate';
 import Box from 'grommet/components/Box';
 import Image from 'grommet/components/Image';
 import Heading from 'grommet/components/Heading';
 import CompanyInformationTabComponent from "./company-information-tab.component";
 
 
-export default class InformationLayerComponent extends Component {
+export default class InformationLayerComponent extends React.PureComponent {
 
-  constructor() {
+  constructor(){
     super();
 
+  }
+
+  shouldComponentUpdate(){
+    return false;
   }
 
 

@@ -15,7 +15,7 @@ import DataStore from '../../stores/DataStore';
 
 import * as DataActions from '../../actions/DataActions';
 
-export default class DataSectionComponent extends Component {
+export default class DataSectionComponent extends React.PureComponent {
 
   constructor() {
     super();
@@ -26,19 +26,18 @@ export default class DataSectionComponent extends Component {
 
     this.getMax = this.getMax.bind(this);
 
-    DataStore.on('company_max_changed', this.getMax);
-    DataActions.fetchMaxAndMin();
-
-
   }
 
   componentWillUnmount() {
     DataStore.removeListener('company_max_changed', this.getMax);
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return !this.state.max !== nextState.max
+  componentDidMount(){
+    DataStore.on('company_max_changed', this.getMax);
+    DataActions.fetchMaxAndMin();
+
   }
+
 
   getMax() {
     this.setState({"max": DataStore.getMax()});
@@ -47,6 +46,7 @@ export default class DataSectionComponent extends Component {
   render() {
 
     let companies = this.props.companies;
+    console.log("render data-section");
 
     return (
       <Box basis="full" pad={{"vertical": "none"}}>

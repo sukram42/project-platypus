@@ -7,19 +7,19 @@
 
   overview: {
     node: {
-      picture: "img/nodejs.png",
+      picture: "img/nodejs.webp",
       caption: "Webserver",
       title: "NodeJs",
       description: "od tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua" + ".Atvero eos et accusam et jus"
     },
     mesosphere: {
-      picture: "img/mesos.png",
+      picture: "img/mesos.webp",
       caption: "Container Management",
       title: "Mesosphere",
       description: "od tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua" + ".Atvero eos et accusam et jus"
     },
     jMeter: {
-      picture: "img/apache.png",
+      picture: "img/apache.webp",
       caption: "Webserver",
       title: "JMeter",
       description: "od tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua" + ".Atvero eos et accusam et jus"

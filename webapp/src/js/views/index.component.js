@@ -6,7 +6,6 @@ import Section from 'grommet/components/Section';
 import Headline from 'grommet/components/Headline';
 
 
-
 import DataSectionComponent from './data-section.component/data-section.component';
 import DataStore from '../stores/DataStore';
 import * as DataActions from '../actions/DataActions';
@@ -16,11 +15,18 @@ import OverviewComponent from "./index.component/overview.component";
 import RequestSectionComponent from "./request-section.component/request-section.component";
 
 
-export default class IndexCompany extends Component {
+export default class IndexCompany extends React.PureComponent {
 
   constructor() {
     super();
 
+
+  }
+
+  /**
+   * Will be executed when the component is rendered
+   */
+  componentWillMount() {
 
     this.getCompanyNames = this.getCompanyNames.bind(this);
 
@@ -31,13 +37,6 @@ export default class IndexCompany extends Component {
     this.state = {
       companyNames: DataStore.getCompanyNames(),
     }
-  }
-
-  /**
-   * Will be executed when the component is rendered
-   */
-  componentWillMount() {
-
   }
 
   /**
@@ -54,9 +53,12 @@ export default class IndexCompany extends Component {
    * Gets the names of the companies and pushes them into the component's state
    */
   getCompanyNames() {
-    this.setState({
-      companyNames: DataStore.getCompanyNames()
-    });
+    let datastore = DataStore.getCompanyNames();
+    if (this.state.companyNames !== DataStore.getCompanyNames()) {
+      this.setState({
+        companyNames: datastore
+      });
+    }
   }
 
   handleClick() {
@@ -65,37 +67,42 @@ export default class IndexCompany extends Component {
     console.log(companyPart.offsetTop);
   }
 
+  // shouldComponentUpdate() {
+  //   return false;
+  // }
+
   render() {
+    console.log("render Index")
     return (
-      <Article scrollStep={true} controls={true} style={{"overflow":"hidden" }}>
+      <Article scrollStep={true} controls={true} style={{"overflow": "hidden"}}>
         <Section pad="none"
                  style={{"backgroundAttachment": "fixed"}}
                  margin="none"
                  justify='center'
                  full='vertical'
-                 texture="img/big-ben_small.jpg"
+                 texture="img/big-ben.webp"
         >
 
           <SplashScreenComponent onClick={() => window.scrollTo(500, 500)}/>
         </Section>
 
         <Section
-            pad="none"
-            justify='center'
-            margin="none"
-            full='vertical'
-            colorIndex="accent-3">
+          pad="none"
+          justify='center'
+          margin="none"
+          full='vertical'
+          colorIndex="accent-3">
           <OverviewComponent />
         </Section>
 
-          <Section pad="none"
-                   // justify='center'
-                   margin="none"
-                   full='vertical'
-                   ref="companies"
-          >
-            <DataSectionComponent companies={this.state.companyNames}/>
-          </Section>
+        <Section pad="none"
+          // justify='center'
+                 margin="none"
+                 full='vertical'
+                 ref="companies"
+        >
+          <DataSectionComponent companies={this.state.companyNames}/>
+        </Section>
       </Article>
     );
   }

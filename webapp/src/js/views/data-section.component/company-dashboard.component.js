@@ -38,12 +38,9 @@ export default class CompanyDashboardComponent extends Component {
 
     this.getCompanyData = this.getCompanyData.bind(this);
     this.getCompanyInformation = this.getCompanyInformation.bind(this);
-    this.onResponsive = this.onResponsive.bind(this);
 
-    DataStore.on('info_changed_' + this.props.company.toUpperCase(), this.getCompanyInformation);
-    DataStore.on('data_changed_' + this.props.company.toUpperCase(), this.getCompanyData);
 
-    DataActions.fetchCompanyData(this.props.company);
+
 
     this.state = {
       companyName: "",
@@ -66,7 +63,6 @@ export default class CompanyDashboardComponent extends Component {
     }
   }
 
-
   componentWillUnmount() {
 
     DataStore.removeListener('data_changed_' + this.props.company.toUpperCase(), this.getCompanyData);
@@ -78,42 +74,26 @@ export default class CompanyDashboardComponent extends Component {
   }
 
   componentDidMount() {
-    this.responsive = Responsive.start(this.onResponsive);
     this.state.interval = DataActions.startCompanyPolling(this.props.company);
     DataActions.fetchCompanyInformation(this.props.company);
   }
 
   componentWillMount() {
     this.getPriceArray();
+    DataStore.on('info_changed_' + this.props.company.toUpperCase(), this.getCompanyInformation);
+    DataStore.on('data_changed_' + this.props.company.toUpperCase(), this.getCompanyData);
+    DataActions.fetchCompanyData(this.props.company);
   }
 
-  componentWillUpdate(_, nextState) {
 
-  }
-
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   if (this.props.max != nextProps.max)
-  //     return true;
-  //   else if (this.state != nextState)
-  //     return true;
-  //
-  //   return false;
-  // }
-
-  onResponsive(small) {
-    this.setState({small});
-  }
 
   /**
    * Gets CompanyData from DataStore
    */
   getCompanyData() {
-
+    let companyData = DataStore.getCompanyData(this.props.company)
     this.setState({
-      companyData: DataStore.getCompanyData(this.props.company)
-    });
-
-    this.setState({
+      companyData ,
       maxVal: 0,
       minVal: 10000000,
       priceArray: []
@@ -148,7 +128,7 @@ export default class CompanyDashboardComponent extends Component {
       return price;
     });
     if (prices !== this.state.priceArray)
-      this.setState({priceArray: prices, minVal, maxVal})
+      this.setState({priceArray: prices, minVal, maxVal});
 
     return prices;
   }
@@ -158,7 +138,6 @@ export default class CompanyDashboardComponent extends Component {
     let companyInformation = this.state.companyInformation;
     let show = this.state.show;
     let markerPos = this.state.markerPos;
-    let small = this.state.small;
     let max = this.state.companyInformation && this.props.max ? this.props.max[this.state.companyInformation.symbol] : 0;
     let change = 0;
     let volume = 0;
@@ -171,6 +150,8 @@ export default class CompanyDashboardComponent extends Component {
     let minVal = this.state.minVal;
     let maxVal = this.state.maxVal;
     let options = this.state.dateOptions;
+
+    console.log("RENDER CompanyDashboard");
 
     try {
       change = (items[markerPos] ? +items[markerPos].change : items[length - 1].change);
@@ -210,7 +191,7 @@ export default class CompanyDashboardComponent extends Component {
                 </Heading>
                 <Visible xs>
                   <Button icon={<Info />}
-                          label={!small ? "Information" : ""}
+                          label={""}
                           accent={true}
                           onClick={() => this.setState({show: true})}
                   />
@@ -227,7 +208,7 @@ export default class CompanyDashboardComponent extends Component {
               <Box >
                 <Visible xl>
                   <Button icon={<Info />}
-                          label={!small ? "Information" : ""}
+                          label={"Information"}
                           accent={true}
                           onClick={() => this.setState({show: true})}
                   />
