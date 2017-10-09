@@ -25,11 +25,10 @@ export default class InformationLayerComponent extends Component {
     let information = this.props.information;
 
     return (
-      <Animate enter={{"animation": "slide-left", "duration": 1000, "delay": 0}}
-               keep={true} visible={this.props.visible}>
+
         <Layer flush={true}
                closer={true}
-               align='right'
+               align='top'
                onClose={this.props.onClose}
         >
 
@@ -47,7 +46,6 @@ export default class InformationLayerComponent extends Component {
             <CompanyInformationTabComponent item={information}/>
           </Box>
         </Layer>
-      </Animate>
     );
   }
 }
