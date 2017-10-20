@@ -28,7 +28,7 @@ export default class SplashScreenComponent extends React.PureComponent {
               <Card heading='Heading'
                     description='Hero description text.'
                     label='label'
-                    link={<Anchor onClick={()=>this.props.onClick()}
+                    link={<Anchor onClick = {()=>{}}
                                   primary={true}
                                   label='Link'/>}/>
             </Box>

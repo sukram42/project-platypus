@@ -29,5 +29,13 @@ ENV JMETER_HOME /jmeter/apache-jmeter-3.3/
 # Add Jmeter to the Path
 ENV PATH $JMETER_HOME/bin:$PATH
 
-# Ports to be exposed from the container for JMeter Master
-EXPOSE 60000
+ENV LOCALPORT 50000
+ENV SERVERPORT 1099
+
+# Ports to be exposed from the container for JMeter Slaves/Server
+EXPOSE $SERVERPORT $LOCALPORT
+
+# Application to run on starting the container
+ENTRYPOINT $JMETER_HOME/bin/jmeter-server \
+                        -Dserver.rmi.localport=$LOCALPORT \
+                        -Dserver_port=$SERVERPORT

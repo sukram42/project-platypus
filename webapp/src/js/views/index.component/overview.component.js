@@ -22,15 +22,10 @@ export default class OverviewComponent extends React.PureComponent {
   shouldComponentUpdate(){
     return false;
   }
-  componentDidMount(){
-    console.log("mount");
-  }
-
   render() {
 
     let texts = Texts.overview;
 
-    console.log("Render Overview")
 
     return (
 
@@ -41,52 +36,51 @@ export default class OverviewComponent extends React.PureComponent {
                    visible={"scroll"} keep={true}>
           <Container fluid={true}>
 
-            <Row style={{"marginBottom": "3%"}}>
-
-                <Col xl={4} style={{"padding": "0 5% 0 5%"}}>
+            <Row className="overview-row overview-row1" >
+                <Col xl={4} >
                   <Image size="small" src={texts.node.picture}/>
                 </Col>
 
 
-                <Col xl={4} style={{"padding": "0 5% 0 5%"}}>
+                <Col xl={4} >
                   <Image size="small" src={texts.mesosphere.picture}/>
                 </Col>
-                <Col xl={4} style={{"padding": "0 5% 0 5%"}}>
+                <Col xl={4} >
                   <Image size="small" src={texts.jMeter.picture}/>
                 </Col>
 
             </Row>
-            <Row>
-                <Col xl={4} style={{"padding": "0 5% 0 5%"}}>
+            <Row className="overview-row">
+                <Col xl={4}>
                   <Heading strong={false}
                            uppercase={true}
                            tag='h3'>
                     {texts.node.caption}
                   </Heading>
                 </Col>
-                  <Col xl={4} style={{"padding": "0 5% 0 5%"}}>
+                  <Col xl={4}>
                     <Heading strong={false}
                              uppercase={true}
                              tag='h3'>
                       {texts.mesosphere.caption}
                     </Heading>
                   </Col>
-                  <Col xl={4} sm={2} xs={2} style={{"padding": "0 5% 0 5%"}}>
+                  <Col xl={4} sm={2} xs={2}>
                     <Heading strong={false}
                              uppercase={true}
                              tag='h3'>
                       {texts.jMeter.caption}
                     </Heading>
                   </Col>
-                  <Col xl={4} sm={2} xs={2} style={{"padding": "0 5% 0 5%"}}/>
+                  <Col xl={4} sm={2} xs={2}/>
             </Row>
 
-            <Row>
+            <Row className="overview-row">
 
               <Animate enter={{"animation": "fade", "duration": 1000, "delay": 0}}
                        leave={{"animation": "fade", "duration": 1000, "delay": 0}}
                        visible={"scroll"} keep={true}>
-                <Col xl={4} style={{"padding": "0 5% 0 5%"}}>
+                <Col xl={4}>
                   <Heading strong={false}
                            uppercase={true}
                            tag='h1'>
@@ -97,7 +91,7 @@ export default class OverviewComponent extends React.PureComponent {
               <Animate enter={{"animation": "fade", "duration": 1000, "delay": 0}}
                        leave={{"animation": "fade", "duration": 1000, "delay": 0}}
                        visible={"scroll"} keep={true}>
-                <Col xl={4} style={{"padding": "0 5% 0 5%"}}>
+                <Col xl={4}>
                   <Heading strong={false}
                            uppercase={true}
                            tag='h1'>
@@ -109,7 +103,7 @@ export default class OverviewComponent extends React.PureComponent {
                        leave={{"animation": "fade", "duration": 1000, "delay": 0}}
                        visible={"scroll"} keep={true}>
 
-                <Col xl={4} style={{"padding": "0 5% 0 5%"}}>
+                <Col xl={4}>
                   <Heading strong={false}
                            uppercase={true}
                            tag='h1'>
@@ -118,15 +112,15 @@ export default class OverviewComponent extends React.PureComponent {
                 </Col>
               </Animate>
             </Row>
-            <Row>
-                <Col xl={4} style={{"padding": "0 5% 0 5%"}}>
+            <Row className="overview-row">
+                <Col xl={4}>
                   <Paragraph size='medium'>{texts.node.description}</Paragraph>
                 </Col>
-                <Col xl={4} style={{"padding": "0 5% 0 5%"}}>
+                <Col xl={4}>
                   <Paragraph size='medium'>{texts.mesosphere.description}
                   </Paragraph>
                 </Col>
-                <Col xl={4} style={{"padding": "0 5% 0 5%"}}>
+                <Col xl={4}>
 
                   <Paragraph size='medium'>{texts.jMeter.description} </Paragraph>
                 </Col>

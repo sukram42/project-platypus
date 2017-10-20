@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+
 import '../scss/index.scss';
 
 import {BrowserRouter, Route, Switch} from "react-router-dom"
@@ -14,6 +15,8 @@ ReactDOM.render(
       <Route path="/" component={Index}/>
     </Switch>
   </BrowserRouter>, element);
+
+
 
 document.body.classList.remove('loading');
 //

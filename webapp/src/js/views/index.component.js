@@ -13,77 +13,28 @@ import * as DataActions from '../actions/DataActions';
 import SplashScreenComponent from "./index.component/splash-screen.component";
 import OverviewComponent from "./index.component/overview.component";
 import RequestSectionComponent from "./request-section.component/request-section.component";
+import PerfProfiler from "../performance_checker";
+import StartTestComponent from "./start-test.component/start-test.component";
 
 
 export default class IndexCompany extends React.PureComponent {
 
   constructor() {
     super();
-
-
   }
 
-  /**
-   * Will be executed when the component is rendered
-   */
-  componentWillMount() {
-
-    this.getCompanyNames = this.getCompanyNames.bind(this);
-
-    DataStore.on('company_names_changed', this.getCompanyNames);
-
-    DataActions.fetchCompanyNames();
-
-    this.state = {
-      companyNames: DataStore.getCompanyNames(),
-    }
-  }
-
-  /**
-   * Will be executed when the component is unmounting
-   */
-  componentWillUnmount() {
-    /**
-     * Removal of EventListener for Change of CompanyNames
-     */
-    DataStore.removeListener('data_changed', this.getCompanyNames);
-  }
-
-  /**
-   * Gets the names of the companies and pushes them into the component's state
-   */
-  getCompanyNames() {
-    let datastore = DataStore.getCompanyNames();
-    if (this.state.companyNames !== DataStore.getCompanyNames()) {
-      this.setState({
-        companyNames: datastore
-      });
-    }
-  }
-
-  handleClick() {
-    window.scrollTo(500);
-    const companyPart = ReactDOM.findDOMNode(this.refs.companies);
-    console.log(companyPart.offsetTop);
-  }
-
-  // shouldComponentUpdate() {
-  //   return false;
-  // }
 
   render() {
-    console.log("render Index")
     return (
-      <Article scrollStep={true} controls={true} style={{"overflow": "hidden"}}>
+      <Article scrollStep={true} className="main-article" controls={true}>
         <Section pad="none"
-                 style={{"backgroundAttachment": "fixed"}}
                  margin="none"
                  justify='center'
                  full='vertical'
                  texture="img/big-ben.webp"
         >
 
-          <SplashScreenComponent onClick={() => window.scrollTo(500, 500)}/>
+          <SplashScreenComponent />
         </Section>
 
         <Section
@@ -101,8 +52,19 @@ export default class IndexCompany extends React.PureComponent {
                  full='vertical'
                  ref="companies"
         >
-          <DataSectionComponent companies={this.state.companyNames}/>
+          <DataSectionComponent/>
         </Section>
+
+        <Section pad="none"
+                 justify='center'
+                 margin="none"
+                 align="center"
+                 full='vertical'
+                 ref="companies"
+        >
+          <StartTestComponent/>
+        </Section>
+          <PerfProfiler />
       </Article>
     );
   }

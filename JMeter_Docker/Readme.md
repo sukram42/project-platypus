@@ -1,15 +1,17 @@
 ##How to set up JMeter/Docker/Grafana
 
--Do 'docker-compose up -d' on Server
--Scale up clients with : 'docker-compose scale jmserver={number of Servernodes}
+-Do '__docker-compose up -d__' on Server
+-Scale up clients with : __docker-compose scale jmserver={number of Servernodes}__
+
 -Find out of Container Ids of clients and master=> 
-    - docker-compose ps 
-    - docker-compose ps -q 
+    - __docker-compose ps__
+    - __docker-compose ps -q__ 
+    
 -Find IP addresses of the nodes
-    - docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' {Id of container}
+    - __docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' {Id of container}__
 
 -Start script with clients
-    - docker exec -ti master 'jmeter -n -t etc/tests/{testname}.jmx
+    - __docker exec -ti master 'jmeter -n -t etc/tests/{testname}.jmx -R192.168.1.1,192.168.1.2__
 
 
 

@@ -19,10 +19,6 @@ export default class InformationLayerComponent extends React.PureComponent {
 
   }
 
-  shouldComponentUpdate(){
-    return false;
-  }
-
 
   render() {
     let information = this.props.information;
@@ -37,8 +33,7 @@ export default class InformationLayerComponent extends React.PureComponent {
 
           <Box align="center" pad="medium">
             <Image size="small"
-                   src={'https://storage.googleapis.com/iex/api/logos/' + information.symbol + '.png'}
-                   style={{"borderRadius": "50%"}}/>
+                   src={'img/icons/' + information.symbol + '.png'}/>
             <Heading uppercase={true}
                      truncate={false}
                      strong={false}

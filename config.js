@@ -37,6 +37,12 @@ var config = {
             appenders: { datalog: { type: 'file', filename: 'data.log' },
                          console: { type: 'console'}},
             categories: { default: { appenders: ['datalog','console'], level: 'all' } }
+        },
+        test: {
+            host:'192.168.99.100',
+            port:'3007',
+            tests:['loadtest.jmx'],
+            count: 3
         }
     },
     production: {
@@ -45,13 +51,19 @@ var config = {
         database: standards.database,
         server: {
             host: '127.0.0.1',
-            port: '3000'
+            port: '3000',
         },
         datamining: standards.datamining,
         polling: standards.polling,
         log:{
             appenders: { datalog: { type: 'file', filename: 'data.log' }},
             categories: { default: { appenders: ['datalog'], level: 'Error' } }
+        },
+        test: {
+            host:'127.0.0.1',
+            port:'3007',
+            tests:['loadtest.jmx'],
+            count: 3
         }
     },
 

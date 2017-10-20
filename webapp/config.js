@@ -2,6 +2,8 @@
  * Created by boebel on 13.09.2017.
  */
 
+const env = process.env;
+
 var standards = {
   datamining: {
     initialisation: true,
@@ -18,12 +20,12 @@ var config = {
     url: 'http://my.site.com',
     //database connection settings
     database: {
-      host: '192.168.99.100',
-      port: '5433',
-      db: 'docker',
-      user: 'dbadmin',
-      passwort: 'sd',
-      maintable: 'sharevalues'
+      host: env.DATABASE_HOST || '192.168.99.100',
+      port: env.DATABASE_PORT || '5433',
+      db: env.DATABASE_NAME || 'docker',
+      user: env.DATABASE_USER || 'dbadmin',
+      passwort: '',
+      maintable: env.MAINTABLE ||'sharevalues'
     },
     certs:{
       key: 'certs/key.pem',
@@ -31,8 +33,8 @@ var config = {
     },
     //server details
     server: {
-      host: '127.0.0.1',
-      port: '3001'
+      host: env.SERVER_HOST || '127.0.0.1',
+      port: env.SERVER_PORT ||'3001'
     },
     datamining: standards.datamining,
     polling: standards.polling,
@@ -48,20 +50,20 @@ var config = {
     //url to be used in link generation
     url: 'http://my.site.com',
     database: {
-      host: '172.17.0.3',
-      port: '5433',
-      db: 'docker',
-      user: 'dbadmin',
-      passwort: 'sd',
-      maintable: 'sharevalues'
+      host: env.DATABASE_HOST ||'172.17.0.3',
+      port: env.DATABASE_PORT || '5433',
+      db: env.DATABASE_NAME || 'docker',
+      user: env.DATABASE_USER || 'dbadmin',
+      passwort: '',
+      maintable: env.MAINTABLE ||'sharevalues'
     },
     certs:{
         key: 'certs/key.pem',
         cert: 'certs/cert.pem'
     },
     server: {
-      host: '127.0.0.1',
-      port: '3000'
+      host: env.SERVER_HOST || '127.0.0.1',
+      port: env.SERVER_PORT ||'3000'
     },
     datamining: standards.datamining,
     polling: standards.polling,
@@ -70,7 +72,7 @@ var config = {
         datalog: {type: 'file', filename: 'data.log'},
         console: {type: 'console'}
       },
-      categories: {default: {appenders: ['datalog', 'console'], level: 'all'}}
+      categories: {default: {appenders: ['datalog', 'console'], level: env.DEBUG_LEVEL || 'all'}}
     }
   },
 };

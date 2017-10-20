@@ -22,10 +22,10 @@ const logger = log4js.getLogger('datalog', 'console');
 var connection;
 var iteration = 0;
 
-var database = process.env.database || config.database.db;
-var host = process.env.host || config.database.host;
-var user = process.env.user || config.database.user;
-var password = process.env.password || config.database.password;
+var database = process.env.DATABASE || config.database.db;
+var host = process.env.HOST || config.database.host;
+var user = process.env.USER || config.database.user;
+var password = process.env.PASSWORD || config.database.password;
 
 logger.info("Connect to " + host);
 logger.info("Database " + database);

@@ -1,5 +1,4 @@
-input[type=range][orient=vertical]
-{
+input[type=range][orient=vertical] {
   writing-mode: bt-lr; /* IE */
   -webkit-appearance: slider-vertical; /* WebKit */
   width: 8px;
@@ -8,12 +7,101 @@ input[type=range][orient=vertical]
 }
 
 .grommetux-carousel__track,
-.grommetux-carousel__track--animate
-{
+.grommetux-carousel__track--animate {
   height: 100%;
 }
 
-grommetux-chart-hot-spots__band--active
-{
+grommetux-chart-hot-spots__band--active {
 
 }
+
+.main-article {
+  overflow: hidden;
+  background-attachment: fixed;
+}
+
+.overview-row {
+  padding: 0 5% 0 5%;
+}
+
+.overview-row1 {
+  margin-bottom: 3%;
+}
+
+.company-carousel {
+  width: 100%;
+  height: 100%;
+}
+.siema
+{
+  width: 100%;
+  height: 100%;
+}
+
+.company-dashboard-box {
+  width: 100%;
+  height: 100%;
+}
+
+.grid
+{
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+}
+.grid-cell
+{
+  flex:1;
+}
+.company-icon
+{
+  width:10vh;
+}
+
+.startTestBox
+{
+  text-align: center;
+  align-items: center;
+}
+
+.heading-col {
+  padding-top: 2%;
+  width: 100%;
+  height: 100%;
+}
+
+
+.full-size{
+  width: 100%;
+  height:100%;
+}
+
+
+loading-screen {
+  height: 100%;
+  align: center;
+}
+
+.perf-profiler {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  right: 50px;
+  top: 20px;
+  padding: 10px;
+  background: #bada55;
+  border: 2px solid black;
+  text-align: center;
+}
+
+.perf-profiler > h1 {
+  font-size: 1.5em;
+}
+
+.perf-profiler > button {
+  display: block;
+  margin-top: 10px;
+  padding: 5px;
+}
+
+

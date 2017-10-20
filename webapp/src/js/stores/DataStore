@@ -1,6 +1,7 @@
 import  {EventEmitter} from 'events';
 
 import dispatcher from '../dispatchers/dispatcher';
+import * as DataActions  from '../actions/DataActions';
 
 class DataStore extends EventEmitter {
   constructor() {
@@ -9,15 +10,23 @@ class DataStore extends EventEmitter {
 
     this.companyNames = [];
     this.interval = null;
-    this.companyData = [];
+    this.companyData = {};
+    this.companyDataComplete = {};
     this.companyInfo = {};
-    this.companyMax={};
+    this.companyInfoComplete = {};
+    this.companyMax = {};
+    this.values = {};
+    this.testStarted = false;
 
-    this.databaseData = {
-      stats: {},
-      log: {},
-      buildInfo: {}
-    };
+    this.init();
+  }
+
+
+  init() {
+    DataActions.fetchCompanyNames();
+    DataActions.fetchMaxAndMin();
+
+    DataActions.testIsStarted().body;
   }
 
   /**
@@ -42,103 +51,123 @@ class DataStore extends EventEmitter {
       case "FETCH_COMPANY_INFO":
         this.fetchCompanyInformation(action.data, param1);
         break;
-      case "FETCH_DATABASE_BUILDINFO":
-        this.fetchDatabaseBuildInfo(action.data);
+      case "SEND_VALUE":
+        this.fetchValue(action.data, action.listener,action.symbol);
         break;
-      case "FETCH_DATABASE_STATS":
-        this.fetchDatabaseStats(action.data);
-        break;
+      case "IS_TEST_STARTED":
+            this.setTestStarted(action.data);
     }
 
   }
-    /**
-     *
-     * @returns {Array|*} Symbols of Companies in the database
-     */
-    getCompanyNames()
-    {
-      return this.companyNames;
+
+  /**
+   *
+   * @returns {Array|*} Symbols of Companies in the database
+   */
+  getCompanyNames() {
+    return this.companyNames;
+  }
+
+  getCompanyInformation() {
+    return this.companyInfoComplete;
+  }
+
+  /**
+   * Returns companydata of one company
+   * @param symbol
+   * @returns {*}
+   */
+  getCompanyData() {
+    return this.companyDataComplete;
+  }
+
+  getMax() {
+    return this.companyMax;
+  }
+
+  isTestStarted()
+  {
+    return this.testStarted;
+  }
+
+  getValue(listener, symbol) {
+    return this.values[listener + ":" + symbol];
+  }
+
+  fetchValue(data, listener,symbol) {
+    if (this.values[listener + ":" + symbol] !== data) {
+      this.values[listener + ":" + symbol] = data;
+      this.emit(listener + ":" + symbol);
     }
+  }
 
-    getCompanyInformation(symbol)
-    {
-      return this.companyInfo[symbol.toUpperCase()];
+  /**
+   * Fetches Companydata and emit it to the components
+   * @param data
+   * @param symbol
+   */
+  fetchCompanyData(data, symbol) {
+    this.companyData[symbol.toUpperCase()] = data;
+    this.handleDataChange();
+  }
+
+  handleDataChange() {
+    let keys = Object.keys(this.companyData).length;
+    let length = this.companyNames.length;
+
+    if (keys === length) {
+      this.companyDataComplete = this.companyData;
+      this.companyData = {};
+      this.emit('data_changed');
     }
+  }
 
-    /**
-     * Returns companydata of one company
-     * @param symbol
-     * @returns {*}
-     */
-    getCompanyData(symbol)
-    {
-      return this.companyData[symbol.toUpperCase()];
+  handleInfoChange() {
+    let keys = Object.keys(this.companyInfo).length;
+    let length = this.companyNames.length;
+
+    if (keys === length) {
+      this.companyInfoComplete = this.companyInfo;
+      this.companyInfo = {};
+      this.emit('info_changed');
     }
+  }
 
-
-    getMax()
-    {
-      return this.companyMax;
+  /**
+   * Sets Store, when new data ist arriving and informs listener. Furthermore an Information Polling starts.
+   * Triggers Information gathering.
+   * @param data Data from Action
+   */
+  fetchCompanyNames(data) {
+    DataActions.fetchCompanyInformation();
+    if (!this.interval) {
+      this.interval = DataActions.startCompanyPolling();
     }
+    this.companyNames = (data);
+    this.emit('company_names_changed');
+  }
 
 
-    /**
-     * Fetches Companydata and emit it to the components
-     * @param data
-     * @param symbol
-     */
-    fetchCompanyData(data, symbol)
-    {
-        this.companyData[symbol.toUpperCase()] = data;
-        this.emit('data_changed_' + symbol.toUpperCase());
-    }
-    /**
-     * Sets Store, when new data ist arriving and informs listener
-     * @param data Data from Action
-     */
-    fetchCompanyNames(data)
-    {
-      this.companyNames = (data);
-      this.emit('company_names_changed');
-    }
-    /**
-     * Sets MAX and MIN values of all Companies
-     * @param data Data from Action
-     */
-    fetchCompanyMax(data)
-    {
-      this.companyMax = (data);
-      this.emit('company_max_changed');
-    }
+  /**
+   * Puts information concerning the companies to the store
+   * @param data
+   * @param symbol
+   */
+  fetchCompanyInformation(data, symbol) {
+    this.companyInfo[symbol.toUpperCase()] = data;
+    this.handleInfoChange();
+  }
 
-    /**
-     * Puts information concerning the companies to the store
-     * @param data
-     * @param symbol
-     */
-    fetchCompanyInformation(data, symbol)
-    {
-      this.companyInfo[symbol.toUpperCase()] = data;
-      this.emit('info_changed_' + symbol.toUpperCase());
-    }
-
-
-    fetchDatabaseBuildInfo(data)
-    {
-      this.databaseData.buildInfo = (data);
-      this.emit('database_changed');
-    }
-
-    fetchDatabaseStats(data)
-    {
-      this.databaseData.stats = (data);
-      this.emit('database_changed');
-    }
-
-
-
+  /**
+   * Set the test to started
+   * @param data
+   */
+  setTestStarted(data) {
+    this.testStarted = data;
+    console.log("Data",data);
+    this.emit("test_started_changed");
+  }
 }
-
 
 /**
  * Register Dispatcher

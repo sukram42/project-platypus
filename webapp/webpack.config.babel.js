@@ -7,7 +7,7 @@ const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const env = process.env.NODE_ENV || 'production';
 
 let plugins = [
-  new CopyWebpackPlugin([{ from: './public' }]),
+  new CopyWebpackPlugin([{from: './public'}]),
   new webpack.DefinePlugin({
     'process.env': {
       NODE_ENV: JSON.stringify(env)
@@ -30,6 +30,11 @@ const devConfig = {};
 if (env === 'production') {
   loaderOptionsConfig.minimize = true;
   plugins.push(
+
+    new webpack.DefinePlugin({
+      // A common mistake is not stringifying the "production" string.
+      'process.env.NODE_ENV': JSON.stringify('production')
+    }),
     // new webpack.optimize.UglifyJsPlugin({
     //   compress: {
     //     warnings: false,
@@ -51,27 +56,30 @@ if (env === 'production') {
     //     screw_ie8: true
     //   }
     // })
-    new UglifyJSPlugin({
-        compress: {
-          warnings: false,
-          screw_ie8: true,
-          conditionals: true,
-          unused: true,
-          comparisons: true,
-          sequences: true,
-          dead_code: true,
-          evaluate: true,
-          if_return: true,
-          join_vars: true,
-        },
-        mangle: {
-          screw_ie8: true
-        },
-        output: {
-          comments: false,
-          screw_ie8: true
-        }
-      })
+    // new UglifyJSPlugin({
+    //   uglifyOptions: {
+    //     ecma: 8
+    //   },
+    //   compress: {
+    //     warnings: false,
+    //     screw_ie8: true,
+    //     conditionals: true,
+    //     unused: true,
+    //     comparisons: true,
+    //     sequences: true,
+    //     dead_code: true,
+    //     evaluate: true,
+    //     if_return: true,
+    //     join_vars: true,
+    //   },
+    //   mangle: {
+    //     screw_ie8: true
+    //   },
+    //   output: {
+    //     comments: false,
+    //     screw_ie8: true
+    //   }
+    // })
   );
 } else {
   plugins = plugins.concat([
@@ -124,8 +132,9 @@ export default Object.assign({
       {
         test: /\.scss$/,
         use: [
-          { loader: 'file-loader', options: { name: '[name].css' } },
-          { loader: 'sass-loader',
+          {loader: 'file-loader', options: {name: '[name].css'}},
+          {
+            loader: 'sass-loader',
             options: {
               outputStyle: 'compressed',
               includePaths: [

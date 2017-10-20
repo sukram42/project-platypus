@@ -6,7 +6,7 @@ var standards = {
       datamining: {
         initialisation: true,
         interval: 5000,
-        symbols: ["AAPL", "HPE", "IBM", "DXC", "DVMT", "CSCO", "INTC", "SAP", "ORCL"]
+          symbols: ["AAPL", "HPE", "IBM", "DXC", "DVMT", "CSCO", "INTC", "SAP", "ORCL"]
     },
     polling: 5000
 }
