@@ -1,5 +1,6 @@
 /**
  * Created by boebel on 04.09.2017.
+ * @module Webapp/Frontend/Actions
  */
 
 import dispatcher from '../dispatchers/dispatcher';
@@ -14,7 +15,7 @@ export const POLLING_TIME = config.polling;
 
 
 /**
- * FETCHING OF COMPANY NAMES IN THE DATABASE
+ * Fetching Company Names from Backend
  */
 export function fetchCompanyNames() {
   let url = (env == 'development' ? "https://" + config.server.host + ":" + config.server.port + "/" : "") + "api/companies/names";
@@ -31,8 +32,8 @@ export function fetchCompanyNames() {
 }
 
 /**
- * Fetches Companydata from backendserver
- * @param symbol
+ * Fetches Companydata from the Backend
+ * @param{string} symbol Symbol of the Company
  */
 export function fetchCompanyData(symbol) {
 
@@ -49,10 +50,11 @@ export function fetchCompanyData(symbol) {
   });
 
 }
+
 /**
- * Starts polling of companydata
- * @param symbol  CompanySymbol
- * @returns Interval-entity
+ * starts polling of the companies' data
+ * @param {string} symbol  CompanySymbol
+ * @returns Interval
  */
 export function startCompanyPolling() {
   companyNames.map(symbol => fetchCompanyData(symbol));
@@ -68,8 +70,7 @@ export function startCompanyPolling() {
 
 /**
  * Stops polling of companydata
- * @param symbol
- * @returns {number}
+ * @param interval Interval-instance, which should be stopped
  */
 export function stopCompanyPolling(interval) {
   if (interval) {
@@ -78,8 +79,8 @@ export function stopCompanyPolling(interval) {
 }
 
 /**
- * Fetches Company Information
- * @param symbol
+ * Fetches Company Information, such as CEO, Market, etc from the Backend
+ * @param{string} symbol Symbol of the company
  */
 export function fetchCompanyInformation() {
   if (companyNames) {
@@ -98,11 +99,10 @@ export function fetchCompanyInformation() {
 }
 
 /**
- * GET Highest and lowest prices
- * @param symbol
+ * GET Highest and lowest prices of the shares
+ * @param symbol Symbol of the Company
  */
 export function fetchMaxAndMin() {
-
   axios.get((env == 'development' ? "https://" + config.server.host + ":" + config.server.port + "/" : "") + 'api/companies/max')
     .then(response => {
       let data = response.data;
@@ -114,9 +114,13 @@ export function fetchMaxAndMin() {
       console.log("Ups", err);
     });
 }
-
+/**
+ * Sends a value to the Store
+ * @param{string} listener identification string of the value
+ * @param symbol Symbol of the company
+ * @param value value, which should be transmitted
+ */
 export function sendValue(listener, symbol, value) {
-
   if (value) {
     dispatcher.dispatch(
       {
@@ -129,7 +133,7 @@ export function sendValue(listener, symbol, value) {
 }
 
 /**
- * Tests if test is running
+ * Tests if the loadTest is already running
  */
 export async function testIsStarted() {
   try {
@@ -145,6 +149,11 @@ export async function testIsStarted() {
   }
 }
 
+/**
+ * Sends Request to the JMeter Backend to start the Load-test
+ * @async
+ * @returns {boolean}
+ */
 export async function startTests() {
   try {
     if (await testIsStarted()) {

@@ -1,5 +1,7 @@
 /**
  * Created by boebel on 26.09.2017.
+ * @module Webapp/Frontend/Texts
+ * @desc Module to show texts on frontend (Mini CSM)
  */
 
 

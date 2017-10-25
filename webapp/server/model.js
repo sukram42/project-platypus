@@ -1,6 +1,10 @@
 /**
  * Created by boebel on 14.09.2017.
+ * @module Webapp/Backend/Data Model
+ * @description Interface to get the data in the Vertica Database.
+ *
  */
+
 'use strict';
 
 const Rx = require('rxjs/Rx');
@@ -13,37 +17,27 @@ const companyNamesCache = require('./company_name_cache');
 // TODO QUERY VARIABLE
 let querys = 0;
 
-/**
- * Sets Environment variables and connects to config script
- * @type {*}
- */
+//Sets Environment variables and connects to config script
+
 const env = process.env.NODE_ENV || 'development';
 const config = require('../config')[env];
 
-
+// Initialise Log4J logger
 log4js.configure(config.log);
 const logger = log4js.getLogger('datalog', 'console');
 
 
 var exports = module.exports = {};
 
-exports.getAll = async function () {
-  let query = "SELECT * FROM " + config.database.maintable;
-  try {
-    return await get(query);
-  } catch (err) {
-    logger.error("GET ALL", err);
-    return null;
-  }
-};
-
 /**
- *Gives Back company information concerning a given interval.
+ *Returns company information concerning a given interval.
  *
- * @param symbol Company symbol
- * @param amount Amount of hours/minutes
- * @param unit  the unit like hours/minutes
- * @returns {*}
+ * @async
+ * @param {string} symbol Company symbol
+ * @param {integer} amount Amount of time
+ * @param {sting} unit Unit of the interval (e.g "hours","minutes",...)
+ * @returns {string} String of the information asked
+ *
  */
 exports.getCompanyInformation = async function (symbol, amount, unit) {
   if (!amount || !unit) {
@@ -66,10 +60,11 @@ exports.getCompanyInformation = async function (symbol, amount, unit) {
 };
 
 /**
- * Gives Back company information concerning an amount of values
- * @param symbol company
- * @param count amount of values
- * @returns {Promise.<*>}
+ * Returns company information concerning an amount of values
+ * @async
+ * @param {string} symbol company
+ * @param {integer} count amount of values
+ * @returns {string} Json string with the information
  */
 exports.getCompanyInformation = async function (symbol, count) {
 
@@ -97,6 +92,12 @@ exports.getCompanyInformation = async function (symbol, count) {
   } else return {err: "Count too high "}
 };
 
+/**
+ *
+ * Retrieves Information for the Maximum and Minimum Sharevalues
+ * @async
+ * @returns {}
+ */
 exports.getMaxAndMin = async function () {
   let query = "SELECT symbol, MAX(price), MIN(price) from " + config.database.maintable + " GROUP BY symbol";
 
@@ -112,7 +113,8 @@ exports.getMaxAndMin = async function () {
 };
 
 /**
- * eturns the names of companies in the database
+ * Returns the names of companies in the database
+ * @async
  * @returns {Promise.<erg>}
  */
 exports.getCompanyNames = async function () {
@@ -134,10 +136,10 @@ exports.getCompanyNames = async function () {
 };
 
 /**
- * Get Data from Database
- * @param query   SQL Query
- * @param asJSON  Boolean, if it should be wrapped as an JSON
- * @returns {Promise.<TResult>}
+ * Helper method to do querys on database
+ * @param {string} query SQL Query
+ * @param {boolean} asJSON  Boolean, if it should be wrapped as an JSON
+ * @returns {Promise.<TResult>} Values of the query in form of a promise.
  */
 function get(query, asJSON) {
 
@@ -169,8 +171,7 @@ function get(query, asJSON) {
 }
 
 /**
- *
- Connect to Vertica
+ * Helper function to connect the model to the Vertica-database
  */
 function connectDatabase() {
   return Vertica.connect({
@@ -184,7 +185,7 @@ function connectDatabase() {
 }
 
 /**
- * Converts the Database Data into JSON
+ * Helper-function, which Converts the Database Data into JSON
  * @param result
  * @returns {Array}
  */

@@ -1,3 +1,9 @@
+/**
+ * @module JMeter/Master/JMeter Interface
+ * @description Module to access the JMeter Commandline and to start and stop tests.
+ */
+
+
 const util = require('util');
 const childprocess = require('child_process');
 const exec = childprocess.exec;

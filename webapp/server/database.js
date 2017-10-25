@@ -2,6 +2,10 @@
  * Created by boebel on 08.09.2017.
  */
 /**
+ * @module Webapp/Backend/Database
+ * @desc Module to retrieve Information about the Database
+ * @deprecated Not working anymore, because of the switch to vertica.
+ *
  * Created by Boebel on 04.09.2017.
  */
 

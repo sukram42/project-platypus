@@ -1,8 +1,14 @@
+
 import  {EventEmitter} from 'events';
+
 
 import dispatcher from '../dispatchers/dispatcher';
 import * as DataActions  from '../actions/DataActions';
 
+/**
+ * Class representing the DataStore
+ * @extends EventEmitter
+ */
 class DataStore extends EventEmitter {
   constructor() {
     super();
@@ -30,8 +36,8 @@ class DataStore extends EventEmitter {
   }
 
   /**
-   * Receives Actions and execute methods according to its type.
-   * @param action
+   * Receives Actions by the Dispatcher and execute methods according to its type.
+   * @param action Action given by the Dispatcher
    */
   handleActions(action) {
     let actiontype = action.type.split(":");
@@ -134,7 +140,7 @@ class DataStore extends EventEmitter {
   }
 
   /**
-   * Sets Store, when new data ist arriving and informs listener. Furthermore an Information Polling starts.
+   * Sets Store, when new data ist arriving and emits listener. Furthermore an Information Polling starts.
    * Triggers Information gathering.
    * @param data Data from Action
    */
@@ -149,7 +155,7 @@ class DataStore extends EventEmitter {
 
 
   /**
-   * Puts information concerning the companies to the store
+   * Adds information concerning the companies to the store.
    * @param data
    * @param symbol
    */
@@ -159,7 +165,7 @@ class DataStore extends EventEmitter {
   }
 
   /**
-   * Set the test to started
+   * Set the loadTests to started.
    * @param data
    */
   setTestStarted(data) {
@@ -170,7 +176,7 @@ class DataStore extends EventEmitter {
 }
 
 /**
- * Register Dispatcher
+ * Register Dispatcherw
  * @type {DataStore}
  */
 const dataStore = new DataStore();

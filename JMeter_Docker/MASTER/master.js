@@ -1,5 +1,8 @@
 // Get dependencies
-
+/**
+ * @file File to setup Backend for the JMeter Master. The API Routes are made directly in this file.
+ * @module JMeter/Master/Server
+ */
 
 const express = require('express');
 const app = express();

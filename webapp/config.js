@@ -1,4 +1,6 @@
 /**
+ * @file Configuration File
+ * @author Markus Böbel
  * Created by boebel on 13.09.2017.
  */
 

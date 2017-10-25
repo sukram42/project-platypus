@@ -1,5 +1,7 @@
-// Get dependencies
-
+/**
+ * @file File to Setup Server
+ * @type {*}
+ */
 
 const express = require('express');
 const app = express();

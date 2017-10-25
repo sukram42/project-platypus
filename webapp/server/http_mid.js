@@ -1,4 +1,6 @@
 /**
+ * @module Webapp/Backend/HTTP2 Middleware
+ * @desc Middleware to push all necessary files to the client, to increase performance
  * Created by boebel on 26.09.2017.
  */
 

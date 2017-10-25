@@ -1,4 +1,6 @@
 /**
+ * @module Datamining/Data
+ * @desc Controller Module for the Datamining of the Sharevalues
  * Created by boebel on 13.09.2017.
  */
 
@@ -31,6 +33,11 @@ logger.info("Connect to " + host);
 logger.info("Database " + database);
 logger.info("NODE_ENV: " + env);
 
+
+/**
+ * Method to connect to the Database
+ * @returns {*}
+ */
 exports.connectDatabase = function () {
     logger.info("Connect to Database");
     return connection = Vertica.connect({
@@ -48,20 +55,27 @@ exports.connectDatabase = function () {
 }
 
 
-/**
+/*
  * ##########################################################################
  * INITIALIZATION
  * ##########################################################################
  */
 
 
-
+/**
+ * Method to Initialize the Database.
+ * That means to Drop the Maintable and create a new one.
+ * @returns {Promise.<void>}
+ */
 exports.initDB = async function () {
     await exports.dropTable();
     logger.info("Initialized");
     return exports.createDatabase();
 }
 
+/**
+ * Method to drop the Maintable
+ */
 exports.dropTable = function () {
     logger.info("DROP TABLE");
     let query = "DROP TABLE IF EXISTS " + config.database.maintable;
@@ -69,6 +83,9 @@ exports.dropTable = function () {
     return exports.doQuery(query);
 }
 
+/**
+ * Method to Create a new Table
+ */
 exports.createDatabase = function () {
     let query = "CREATE TABLE IF NOT EXISTS " + config.database.maintable +
         "(timestamp TIMESTAMP" +
@@ -83,7 +100,11 @@ exports.createDatabase = function () {
     return exports.doQuery(query, true);
 }
 
-
+/**
+ * Helper Function to query.
+ * @param query
+ * @returns {Promise}
+ */
 exports.doQuery = function (query) {
     return new Promise((resolve, reject) => {
         connection.query(query, (err, result) => {
@@ -93,14 +114,14 @@ exports.doQuery = function (query) {
     });
 }
 
-/**
+/*
  * ##########################################################################
  * FETCHING DATA
  * ##########################################################################
  */
 
 /**
- * Fetches Data from the API
+ * Function which fetches Data from the API
  */
 exports.getData = function () {
 
@@ -110,7 +131,7 @@ exports.getData = function () {
 }
 
 /**
- * Generates the API URLs
+ * Method which generates the API URLs
  */
 exports.getURLs = function () {
     let urls = [];
@@ -123,8 +144,8 @@ exports.getURLs = function () {
     return urls;
 }
 /**
- * Fetches the information from the API
- * @param urls
+ * This Functions fetches the information from the API
+ * @param urls Urls which should be fetched
  */
 exports.fetchData = function (urls) {
 
@@ -138,6 +159,11 @@ exports.fetchData = function (urls) {
     });
 }
 
+/**
+ * Function which saves the requested Data into the database
+ * @param body Body from the Requests
+ * @returns {Promise.<TResult>}
+ */
 exports.saveInDb = function (body) {
     var values = {
         "symbol": body.symbol,
@@ -163,7 +189,7 @@ exports.saveInDb = function (body) {
     }, err => logger.error(err));
 }
 
-/**
+/*
  * Start initialization if wanted.
  * Set Interval for datapolling
  */

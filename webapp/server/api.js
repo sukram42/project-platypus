@@ -1,16 +1,19 @@
 /**
- * Created by Boebel on 04.09.2017.
+ * @module Webapp/Backend/API Endpoints
+ * @desc Module to set the API endpoints of the server#
+ * @author Markus Böbel
+ *
  */
+
 
 const express = require('express');
 const router = express.Router();
 
 const log4js = require('log4js');
 
-/**
- * Sets Environment variables and connects to config script
- * @type {*}
- */
+
+//Sets Environment variables and connects to config script
+
 var env = process.env.NODE_ENV || 'development';
 const config = require('../config')[env];
 
@@ -21,54 +24,6 @@ const logger = log4js.getLogger('datalog','console');
 const model = require('./model');
 const database = require('./database');
 
-/**
- *  GET | GET DatabaseLog
- */
-router.get('/database/log', (req, res) => {
-  database.getLog().then(
-    (data) => res.status(200).send(data)
-    , (err) => res.status(500).send(err));
-});
-
-/**
- *  GET | GET DatabaseLog
- */
-router.get('/database/buildinfo', (req, res) => {
-  database.getBuildInfo().then(
-    (data) => res.status(200).send(data)
-    , (err) => res.status(500).send(err));
-});
-
-/**
- *  GET | GET DatabaseLog
- */
-router.get('/database/stats', (req, res) => {
-  logger.info("Request on route /database/stats");
-  database.getStats().then(
-    (data) => res.status(200).send(data)
-    , (err) => res.status(500).send(err));
-});
-
-
-/**
- *  GET | TESTS API
- */
-router.get('/', (req, res) => {
-  logger.info("Request on route /");
-  res.status(200).send('api works');
-});
-
-/**
- *  GET | COMPANIES
- */
-router.get('/companies', (req, res) => {
-  logger.info("Request on route /companies");
-  model.getAll().then(promiseData => {
-    promiseData.subscribe(data => {
-      res.status(200).send(data);
-    }, err => res.status(500).send(err));
-  });
-});
 
 /**
  *  GET | HIGH AND MIN
@@ -80,7 +35,7 @@ router.get('/companies/max', (req, res) => {
 
 
 /**
- *  GET | COMPANY NAMES
+ *  HTTP requests to retrieve the Names and symbols of the companies in the _database_.
  */
 router.get('/companies/names', (req, res) => {
   logger.info("Request on route /companies/names");
@@ -88,7 +43,7 @@ router.get('/companies/names', (req, res) => {
 });
 
 /**
- *  GET | COMPANY DATA
+ *  HTTP request on '/companies'
  */
 router.get('/companies/:companyId', async (req, res) => {
   logger.info("Request on route /:companyId");
@@ -113,3 +68,6 @@ router.get('/companies/:companyId', async (req, res) => {
 
 
 module.exports = router;
+
+
+
