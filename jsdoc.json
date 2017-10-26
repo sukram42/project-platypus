@@ -1,0 +1,25 @@
+{
+  "plugins": [],
+  "recurseDepth": 10,
+  "source": {
+    "include":["webapp","datamining","JMeter_Docker/MASTER"],
+    "exclude":["webapp/dist",
+      "webapp/node_modules",
+      "webapp/public",
+      "datamining/node_modules",
+      "datamining/test",
+      "JMeter_Docker/MASTER/node_modules"
+    ],
+    "includePattern": ".+\\.js(doc|x)?$",
+    "excludePattern": "(^|\\/|\\\\)_"
+  },
+  "sourceType": "module",
+  "opts": {
+    "destination": "./doc/",
+    "recurse": true
+  },
+  "tags": {
+    "allowUnknownTags": true,
+    "dictionaries": ["jsdoc","closure"]
+  }
+}
