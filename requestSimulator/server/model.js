@@ -94,7 +94,3 @@ exports.commitValues = async function () {
 connection = connectDatabase();
 
 exports.initTable();
-
-
-
-

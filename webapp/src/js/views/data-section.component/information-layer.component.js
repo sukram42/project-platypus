@@ -27,7 +27,7 @@ export default class InformationLayerComponent extends React.PureComponent {
 
         <Layer flush={true}
                closer={true}
-               align='top'
+               align='left'
                onClose={this.props.onClose}
         >
 

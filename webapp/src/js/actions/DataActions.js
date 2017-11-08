@@ -7,7 +7,7 @@ import dispatcher from '../dispatchers/dispatcher';
 import axios from 'axios';
 
 const env = process.env.NODE_ENV || 'development';
-const config = require('../../../../config')[env];
+const config = require('../../../config')[env];
 
 var companyNames = {};
 
@@ -145,7 +145,7 @@ export async function testIsStarted() {
     });
     return response;
   } catch (err) {
-    console.log("ERROR", err);
+    return err;
   }
 }
 
@@ -157,8 +157,9 @@ export async function testIsStarted() {
 export async function startTests() {
   try {
     if (await testIsStarted()) {
-      let path = `http://${config.test.host}:${config.test.port}/startScript`;
-      let response = await axios.post(path, {"filename": "loadtest.jmx"},{validateStatus: function (status) {
+      let path = `https://${config.jmmaster.host}:${config.jmmaster.port}/startScript`;
+      console.log(path);
+      let response = await axios.post(path, {"filename": config.jmmaster.tests[0]},{validateStatus: function (status) {
         return status < 500; // Reject only if the status code is greater than or equal to 500
       }});
       dispatcher.dispatch(
@@ -169,6 +170,6 @@ export async function startTests() {
       return response;
     }
   } catch (err) {
-    console.info(err);
+    console.log(err)
   }
 }

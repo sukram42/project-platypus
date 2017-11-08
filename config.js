@@ -60,7 +60,7 @@ var config = {
             categories: { default: { appenders: ['datalog'], level: 'Error' } }
         },
         test: {
-            host:'127.0.0.1',
+            host:'jmmaster',
             port:'3007',
             tests:['loadtest.jmx'],
             count: 3

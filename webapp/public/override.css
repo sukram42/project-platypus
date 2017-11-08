@@ -1,3 +1,8 @@
+
+body{
+  overflow-y:hidden !important;
+}
+
 input[type=range][orient=vertical] {
   writing-mode: bt-lr; /* IE */
   -webkit-appearance: slider-vertical; /* WebKit */
@@ -6,14 +11,17 @@ input[type=range][orient=vertical] {
   padding: 0 5px;
 }
 
-.grommetux-carousel__track,
-.grommetux-carousel__track--animate {
-  height: 100%;
+.information-div
+{
+  position: absolute ;
+  background-color: rgba(1, 169, 130,255);
+  padding: 10px ;
+}
+.information-div:hover
+{
+  border: 1px solid rgb(255, 141, 109);
 }
 
-grommetux-chart-hot-spots__band--active {
-
-}
 
 .main-article {
   overflow: hidden;
@@ -35,6 +43,25 @@ grommetux-chart-hot-spots__band--active {
 .siema
 {
   width: 100%;
+  height: 100%;
+}
+
+
+.siemasse
+{
+  width: 100%;
+  height: 100%;
+}
+.carousel-container > div
+{
+  height: 100%;
+}
+.carousel-container > div > div
+{
+  height: 100%;
+}
+.carousel-container > div > div > div
+{
   height: 100%;
 }
 
@@ -80,6 +107,21 @@ grommetux-chart-hot-spots__band--active {
 loading-screen {
   height: 100%;
   align: center;
+}
+
+.mainHeading
+{
+
+  color:  #ff8d6d;;
+}
+.mainCaption
+{
+  color: #000;
+}
+
+.grommetux-control-icon {
+  fill: #777;
+  stroke: #AAA;
 }
 
 .perf-profiler {

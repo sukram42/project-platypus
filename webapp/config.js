@@ -17,21 +17,24 @@ var standards = {
 
 var config = {
   development: {
-
-    //url to be used in link generation
-    url: 'http://my.site.com',
     //database connection settings
     database: {
-      host: env.DATABASE_HOST || '192.168.99.100',
+      host: env.DATABASE_HOST || '10.3.16.146',
       port: env.DATABASE_PORT || '5433',
-      db: env.DATABASE_NAME || 'docker',
+      db: env.DATABASE_NAME || 'TWLON_data',
       user: env.DATABASE_USER || 'dbadmin',
-      passwort: '',
+      password: env.DATABASE_PASSWORD || 'password',
       maintable: env.MAINTABLE ||'sharevalues'
     },
     certs:{
       key: 'certs/key.pem',
       cert: 'certs/cert.pem'
+    },
+    jmmaster: {
+      host: env.JMETER_HOST || 'jmmaster',
+      port: env.JMETER_PORT || 3007,
+      tests:['loadtest.jmx'],
+      count: env.JMETER_COUNT || 3
     },
     //server details
     server: {
@@ -52,12 +55,12 @@ var config = {
     //url to be used in link generation
     url: 'http://my.site.com',
     database: {
-      host: env.DATABASE_HOST ||'172.17.0.3',
-      port: env.DATABASE_PORT || '5433',
-      db: env.DATABASE_NAME || 'docker',
+      host: env.DATABASE_HOST || '10.3.16.146',
+      port: env.DATABASE_PORT ||'5433',
+      db: env.DATABASE_NAME ||'TWLON_data',
       user: env.DATABASE_USER || 'dbadmin',
-      passwort: '',
-      maintable: env.MAINTABLE ||'sharevalues'
+      password: env.DATABASE_PASSWORD  || 'password',
+      maintable:  env.DATABASE_MAINTABLE || 'sharevalues'
     },
     certs:{
         key: 'certs/key.pem',
@@ -66,6 +69,12 @@ var config = {
     server: {
       host: env.SERVER_HOST || '127.0.0.1',
       port: env.SERVER_PORT ||'3000'
+    },
+    jmmaster: {
+      host: env.JMETER_HOST || 'jmmaster',
+      port: env.JMETER_PORT || 3007,
+      tests:['loadtest.jmx'],
+      count: env.JMETER_COUNT || 3
     },
     datamining: standards.datamining,
     polling: standards.polling,

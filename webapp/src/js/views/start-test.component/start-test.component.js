@@ -13,6 +13,7 @@ import Heading from 'grommet/components/Heading';
 import TestIcon from 'grommet/components/icons/base/Test';
 import Deploy from 'grommet/components/icons/base/Deploy';
 import Error from 'grommet/components/icons/base/Close';
+import Dislike from 'grommet/components/icons/base/Dislike';
 
 import * as DataAction from '../../actions/DataActions';
 import DataStore from '../../stores/DataStore';
@@ -48,13 +49,13 @@ export default class StartTestComponent extends React.PureComponent {
 
     try {
       let response = await DataAction.startTests();
-      if (response.status === 200 || response.status === 304)
+      if (response && (response.status === 200 || response.status === 304))
         this.setState({testStarted: true});
       else
         this.setState({error: true});
 
     }catch(err){
-      console.log(err);
+      console.error(err);
     }
   }
 
@@ -93,14 +94,12 @@ export default class StartTestComponent extends React.PureComponent {
         onClick={() => this.handler()}
         type='button'>
         <Box className="startTestBox" pad={{"between": "medium"}}>
-          <Error size="huge" colorIndex="critical"/>
+          <Dislike size="huge" colorIndex="critical"/>
           <Heading strong={false}
                    uppercase={true}
-                   tag='h1'>Failure</Heading>
+                   tag='h1'>Something went barely wrong</Heading>
         </Box>
       </Button>);
-
-    console.log(started);
 
     return (
       <Box>

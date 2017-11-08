@@ -5,28 +5,33 @@
  */
 
 
- let texts = {
-
-  overview: {
-    node: {
-      picture: "img/nodejs.webp",
-      caption: "Webserver",
-      title: "NodeJs",
-      description: "od tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua" + ".Atvero eos et accusam et jus"
+let texts =
+  {
+    splashscreen: {
+      header: "The Power of Scalability",
+      caption: "Start the adventure now",
+      icon: "img/scalability.svg"
     },
-    mesosphere: {
-      picture: "img/mesos.webp",
-      caption: "Container Management",
-      title: "Mesosphere",
-      description: "od tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua" + ".Atvero eos et accusam et jus"
-    },
-    jMeter: {
-      picture: "img/apache.webp",
-      caption: "Webserver",
-      title: "JMeter",
-      description: "od tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua" + ".Atvero eos et accusam et jus"
+    overview: {
+      node: {
+        picture: "img/nodejs.webp",
+        caption: "Webserver",
+        title: "NodeJs",
+        description: "od tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua" + ".Atvero eos et accusam et jus"
+      },
+      mesosphere: {
+        picture: "img/mesos.webp",
+        caption: "Container Management",
+        title: "Mesosphere",
+        description: "od tempor invidunt labore dolore magna aliquyam erat, sed diam voluptua .Atvero eos et accusam et jus"
+      },
+      jMeter: {
+        picture: "img/apache.webp",
+        caption: "Webserver",
+        title: "JMeter",
+        description: "od tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua" + ".Atvero eos et accusam et jus"
+      }
     }
-  }
-}
+  };
 
 module.exports = texts;

@@ -12,15 +12,19 @@ chai.should();
 
 describe("Datascript", function () {
     describe("Database things", function () {
+        it("should connect to database",async function(){
+            let result = await data.connectDatabase();
+            result.should.be.a('object');
+        })
         it("should drop Table if not exists", async function () {
             let result = await data.dropTable();
             result.status.should.equal('DROP TABLE');
         });
-        it("should drop Table", async function () {
-
+        it("should create Table", async function () {
             let result = await data.createDatabase();
             result.status.should.equal('CREATE TABLE');
         });
+
     });
     describe("help functions", function () {
         it("should get urls", async function () {

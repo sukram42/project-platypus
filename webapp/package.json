@@ -21,6 +21,7 @@
     "log4js": "^2.3.3",
     "moment": "^2.18.1",
     "mongodb": "^2.2.31",
+    "numeral": "^2.0.6",
     "nw-react-slider": "^2.0.1",
     "rc-slider": "^8.3.1",
     "react": "^15.4.0",

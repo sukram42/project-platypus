@@ -74,11 +74,11 @@ export default class DataSectionComponent extends React.PureComponent {
 
 
     return (
-      <Box basis="full" pad={{"vertical": "none"}} colorIndex="neutral-1">
+      <Box  pad={{"vertical": "none"}} style={{"height":"100%"}} colorIndex="neutral-1"  className="carousel-container">
         {keys.length > 0 ?
           <ReactSiema className="siemasse">
             {keys.map((key, index) =>
-            <div key={key} style={{"height":"100vh"}}>
+            <div key={key}>
                <CompanyDashboardComponent max={this.state.max}
                                          key={key}
                                          companyData={this.state.data[key]}

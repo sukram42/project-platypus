@@ -24,10 +24,10 @@ const logger = log4js.getLogger('datalog', 'console');
 var connection;
 var iteration = 0;
 
-var database = process.env.DATABASE || config.database.db;
-var host = process.env.HOST || config.database.host;
-var user = process.env.USER || config.database.user;
-var password = process.env.PASSWORD || config.database.password;
+var database = config.database.db;
+var host = config.database.host;
+var user = config.database.user;
+var password = config.database.password;
 
 logger.info("Connect to " + host);
 logger.info("Database " + database);
@@ -54,13 +54,11 @@ exports.connectDatabase = function () {
     });
 }
 
-
 /*
  * ##########################################################################
  * INITIALIZATION
  * ##########################################################################
  */
-
 
 /**
  * Method to Initialize the Database.
@@ -90,7 +88,7 @@ exports.createDatabase = function () {
     let query = "CREATE TABLE IF NOT EXISTS " + config.database.maintable +
         "(timestamp TIMESTAMP" +
         ", price numeric(5,2)" +
-        ",change numeric(5,2)" +
+        ",change float" +
         ",volume integer" +
         ",delayedPrice numeric(5,2)" +
         ",delayedPriceTime timestamp" +
@@ -175,7 +173,6 @@ exports.saveInDb = function (body) {
         "delayedPrice": body.delayedPrice,
         "delayedPriceTime": moment(body.delayedPriceTime).format("YYYY-MM-DD h:mm:ss"),
     }
-
     querys = "INSERT INTO " + config.database.maintable + "(timestamp,price,change,volume,delayedPrice,delayedPriceTime,symbol)  VALUES " + "('"
         + values.timestamp + "',"
         + values.price + ","

@@ -5,20 +5,12 @@
 import React, {Component} from 'react';
 
 
-import * as DataActions from '../../actions/DataActions';
-import Moment from 'moment';
-import Chart, {Axis, Marker, HotSpots, Base, Grid, Line, Layers, MarkerLabel} from 'grommet/components/Chart';
 
 import Heading from 'grommet/components/Heading';
 import Image from 'grommet/components/Image';
 import Box from 'grommet/components/Box';
-import Animate from 'grommet/components/Animate';
 import Button from 'grommet/components/Button';
-import Value from 'grommet/components/Value';
 
-
-import LinkUp from 'grommet/components/icons/base/LinkUp';
-import LinkDown from 'grommet/components/icons/base/LinkDown';
 
 
 import Info from 'grommet/components/icons/base/Info';
@@ -54,6 +46,9 @@ export default class CompanyDashboardComponent extends React.PureComponent {
     return false;
   }
 
+  handleClick() {
+    this.setState({show: true});
+  }
 
   render() {
     let companyInformation = this.props.companyInformation;
@@ -61,21 +56,30 @@ export default class CompanyDashboardComponent extends React.PureComponent {
 
 
     return (
-      <Box className="company-dashboard-box" justify="around" pad={{"vertical": "large","between":"medium"}}>
+      <Box className="company-dashboard-box" justify="center" pad={{"vertical": "small", "between": "medium"}}>
+        {companyInformation?<div className="information-div" onClick={() => this.handleClick()}>
+          <Button icon={<Info />}
+                  onClick={() => this.handleClick()}
+          />
+        </div>:""}
+
+        {companyInformation?
+        <div>
+
         <Row>
           <Col xl={1} sm={1} xs={1}/>
           <Col xl={10} sm={10} xs={10}>
 
-            <Box direction="row" pad={{"between":"large"}} basis="small">
-              <Box className="heading-col-box" >
+            <Box direction="row" pad={{"between": "large"}} basis="small">
+              <Box className="heading-col-box">
                 <Image
                   className="company-icon"
                   fit="contain"
-                  src={`img/icons/${companyInformation.symbol}.png`}
+                  src={companyInformation ? `img/icons/${companyInformation.symbol}.png` : ""}
                 />
               </Box>
               <Box justify="center" textAlign="left">
-                <Box className="heading-col-box" >
+                <Box className="heading-col-box">
                   <Heading tag="h1">
                     {companyInformation ? companyInformation.companyName : ""}
                   </Heading>
@@ -94,69 +98,74 @@ export default class CompanyDashboardComponent extends React.PureComponent {
               </Box>
             </Box>
           </Col>
-
           <Col xl={1} sm={1} xs={1}/>
         </Row>
+        <Row>
+          <Col sm={1} xl={1} xs={1}/>
+          <Col sm={10} xl={10} xs={10}>
+            <PriceChartComponent symbol={companyInformation.symbol} companyData={this.props.companyData}/>
+          </Col>
 
-          <Row>
-            <Col sm={1} xl={1} xs={1}/>
-            <Col sm={10} xl={10} xs={10}>
-              <PriceChartComponent symbol={companyInformation.symbol} companyData={this.props.companyData}/>
-            </Col>
+          <Col sm={1} xl={1} xs={1}/>
+        </Row>
+        <Row>
+          <Col sm={1} xl={1} xs={1}/>
+          <Col sm={10} xl={10} xs={10} debug>
+            <svg width="100%" height={10}>
+              <line strokeLinecap="round"
+                    x1="0%" y1="0" x2="100%" y2="0"
+                    stroke="white" strokeWidth="5"/>
+            </svg>
+          </Col>
+          <Col sm={1} xl={1} xs={1}/>
+        </Row>
+        <Row >
 
-            <Col sm={1} xl={1} xs={1}/>
-          </Row>
-          <Row>
-            <Col sm={1} xl={1} xs={1}/>
-            <Col sm={10} xl={10} xs={10} debug>
-              <svg width="100%" height={10}>
-                <line strokeLinecap="round"
-                      x1="0%" y1="0" x2="100%" y2="0"
-                      stroke="white" strokeWidth="5"/>
-              </svg>
-            </Col>
-            <Col sm={1} xl={1} xs={1}/>
-          </Row>
-          <Row >
-
-            <Col sm={1} xl={1} xs={1}/>
-            <Col sm={3} xl={3} xs={3}>
-              <ValueFieldComponent
-                units='$'
-                aligned="start"
-                trend={true}
-                symbol={companyInformation.symbol}
-                listener="PRICE"
-              />
-            </Col>
-            <Col sm={4} xl={4} xs={4}>
-              <ValueFieldComponent
-                symbol={companyInformation.symbol}
-                listener="TIMESTAMP"
-              />
-            </Col>
-            <Col sm={3} xl={3} xs={3}>
-              <ValueFieldComponent
-                units='%'
-                symbol={companyInformation.symbol}
-                listener='CHANGE'
-                aligned="end"
-              />
-            </Col>
-            <Col sm={1} xl={1} xs={1}/>
-          </Row>
-
-          {show ? (
-            <InformationLayerComponent onClose={() => this.setState({show: false})}
-                                       information={companyInformation}
-                                       visible={show}
+          <Col sm={1} xl={1} xs={1}/>
+          <Col sm={3} xl={3} xs={3}>
+            <ValueFieldComponent
+              units='$'
+              aligned="start"
+              trend={true}
+              symbol={companyInformation.symbol}
+              listener="PRICE"
             />
-          ) : ""}
+          </Col>
+          <Col sm={4} xl={4} xs={4}>
+            <ValueFieldComponent
+              symbol={companyInformation.symbol}
+              listener="TIMESTAMP"
+            />
+          </Col>
+          <Col sm={3} xl={3} xs={3}>
+            <ValueFieldComponent
+              units='%'
+              symbol={companyInformation.symbol}
+              listener='CHANGE'
+              aligned="end"
+            />
+          </Col>
+          <Col sm={1} xl={1} xs={1}/>
+        </Row>
+        </div>
+        : ""}
+
+        {!companyInformation?<Box style={{"height": "100%"}} className="loading-screen" justify="center">
+          <svg>
+            <rect x="40%" y="50%" width="20%" height="30%" fill="none" stroke="#01a982" strokeWidth="10px"/>
+          </svg>
+        </Box>:""}
+        {show ? (
+          <InformationLayerComponent onClose={() => this.setState({show: false})}
+                                     information={companyInformation}
+                                     visible={show}
+          />
+        ) : ""}
 
       </Box>
-  );
+    );
 
   }
-  }
+}
 
 

@@ -57,6 +57,7 @@ RUN npm i --production
 # Add application files
 ADD . /var/www/app/current
 
+ENV NODE_ENV production
 #Expose the port
 #EXPOSE 3000
 

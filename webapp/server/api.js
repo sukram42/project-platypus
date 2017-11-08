@@ -22,7 +22,6 @@ const logger = log4js.getLogger('datalog','console');
 
 
 const model = require('./model');
-const database = require('./database');
 
 
 /**

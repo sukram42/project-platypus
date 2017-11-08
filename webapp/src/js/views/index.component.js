@@ -28,12 +28,12 @@ export default class IndexCompany extends React.PureComponent {
     return (
       <Article scrollStep={true} className="main-article" controls={true}>
         <Section pad="none"
+                 className="landing-section"
                  margin="none"
                  justify='center'
                  full='vertical'
-                 texture="img/big-ben.webp"
+                 texture="img/big-ben_blur.webp"
         >
-
           <SplashScreenComponent />
         </Section>
 
@@ -45,7 +45,6 @@ export default class IndexCompany extends React.PureComponent {
           colorIndex="accent-3">
           <OverviewComponent />
         </Section>
-
         <Section pad="none"
           // justify='center'
                  margin="none"
@@ -60,11 +59,10 @@ export default class IndexCompany extends React.PureComponent {
                  margin="none"
                  align="center"
                  full='vertical'
-                 ref="companies"
+                 className="start-test"
         >
           <StartTestComponent/>
         </Section>
-          <PerfProfiler />
       </Article>
     );
   }

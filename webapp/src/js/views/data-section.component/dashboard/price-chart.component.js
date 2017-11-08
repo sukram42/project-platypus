@@ -11,6 +11,7 @@ import React from 'react';
 
 import * as DataActions from '../../../actions/DataActions';
 import Moment from 'moment';
+import Numeral from 'numeral';
 import Chart, {Axis, HotSpots, Base, Line, Layers, MarkerLabel} from 'grommet/components/Chart';
 import ChartMarkerComponent from "./chart-marker.component";
 
@@ -25,7 +26,6 @@ export default class PriceChartComponent extends React.PureComponent {
       timestampFormat: 'Do MMM YY h:mm A',
       timestampFormatChart: 'Do MMM YY',
       show: false,
-      change: 0,
       volume: 0,
       maxVal: 0,
       minVal: 10000000,
@@ -111,10 +111,10 @@ export default class PriceChartComponent extends React.PureComponent {
 
 
     setTimeout(function () { // Run after dispatcher has finished
-      DataActions.sendValue('CHANGE', symbol, change.toFixed());
+      DataActions.sendValue('CHANGE', symbol,Numeral(+change*100).format('00.00'));
     }, 0);
     setTimeout(function () { // Run after dispatcher has finished
-      DataActions.sendValue('PRICE', symbol, price);
+      DataActions.sendValue('PRICE', symbol,  Numeral(price).format('00.00'));
     }, 0);
     setTimeout(function () { // Run after dispatcher has finished
       DataActions.sendValue('VOLUME', symbol, volume);
@@ -152,9 +152,9 @@ export default class PriceChartComponent extends React.PureComponent {
 
                         DataActions.sendValue('TIMESTAMP', symbol, time);
                         DataActions.sendValue('VOLUME', symbol, volume);
-                        DataActions.sendValue('CHANGE', symbol, change.toFixed());
+                        DataActions.sendValue('CHANGE', symbol,Numeral(+change*100).format('00.00'));
                         DataActions.sendValue('MARKER_POS', symbol, index);
-                        DataActions.sendValue('PRICE', symbol, price);
+                        DataActions.sendValue('PRICE', symbol,  Numeral(price).format('00.00'));
                       }}/>
           </Layers>
 
