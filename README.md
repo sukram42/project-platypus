@@ -53,23 +53,6 @@ Combination of Tools to enable loadtesting.
   
   To increase load performance, JMeter can be clustered over multiple nodes.
   
-  #### Docker-compose File
-  
-  The deployment of the load test environment is done by the Dockercomposefile "docker-compose.yml" in the root directory.
-  
- With `Docker-compose up -d` the setup is started. Through `docker-compose ps` or `docker ps`, the running container can be watched. To start a test manually from the jmaster container it is possible to use the following command.
- 
- `docker exec -ti <ContainerID> jmeter -n -t -c 'etc/tests/<testfile>' -R<names of jmserver container>` 
- 
- The jmserver container are shown at the docker ps command. To increase the amount of server nodes just write: 
- 
- `docker-compose scale jmserver=<AmountOfContainer>`
-
-After the start of the docker-compose file, the Grafana-Dashboard should be reachable on port 3005. The default password is 'admin' as well as the password. 
-When adding a new data source, it is possible to reach the influxdb with the hostname `influxdb`. The used table is called `jmeter`.
-
-If there are problems with the docker images, it is possible to build new ones with the Dockerfiles under JMeter_Docker/MASTER/Dockerfile or JMeter_Docker/SERVER/Dockerfile. The docker-compose file could be in need of an update concerning the image name.
-
 ##Datamining
 
 The datamining script found in the ./datamining folder. To run the script just run `node data` in the datamining folder. 
@@ -98,6 +81,48 @@ In Case of an database-swap, just the model.js file has to be changed.
 
 The database.js file is deprecated, because it was made for the mongodb use. 
 
+#Docker Swarm deployment
+
+Due to the coming collaboration of Docker Swarm and Kubernetes, the application is deployed on Docker Swarm. This enables new possibilities like load-scaling and distributed Container deployment.
+
+The UCP dashboard is deployed on :
+
+- https://tw-ucp1.twlon.com/manage/dashboard
+
+The Docker Repository can be found on:
+
+- https://tw-ucp2.twlon.com/repositories
 
 
+To deploy the application type:
+
+`docker stack deploy -c <docker compose file>`
+
+Following services will be created:
+
+| Name          | Http-outputport | Description         |
+| ------------- |-----------------| --------------------|
+| webapp        | 3000            | React-Webapp        |
+| datamining    | ----            | Datamining-script   |
+| jmmaster      | 3007            | JMeter master node  |
+| jmserver      | ----            | JMeter slave node   |
+| grafana       | 3005            | Grafana Dashboard   |
+| influx        | 8086            | Database for JMeter |
+                
+Every service of this bundle can be reached by its service name.
+For example:
+
+When the grafana dashboard needs to reach the influx database, you can just use `http://influx:8086`.
+
+
+In case components are being updated it is possible to use the `update_<service name>.sh` script in the root folder.
+To reach the docker swarm plattform, it is necessary to update the environment variables. On the UCP Plattform  it is possible to download Client Bundles. (https://tw-ucp1.twlon.com/manage/profile/clientbundle/) 
+
+In these there is an `env.sh` script which will set the env for you.
+
+Further important commands to use when working with docker swarm are:
+
+`docker stack --help` : options about the running compose file
+
+`docker service --help` : options on the running services 
 

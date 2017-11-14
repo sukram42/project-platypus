@@ -2,19 +2,21 @@ version: '3.3'
 
 services:
     webapp:
-        image: "tw-ucp2.twlon.com/admin/scale_webapp"
+        image: "tw-ucp2.twlon.com/admin/scale_webapp:latest"
         ports:
             - 3000:3000
         environment:
             - DATABASE_HOST=10.3.16.146
         networks:
             - demo
+
     datamining:
         image: "tw-ucp2.twlon.com/admin/scale_datamining:latest"
         environment:
             - NODE_ENV=production
         networks:
             - demo
+
     influx:
         image: "influxdb"
         ports:
@@ -45,7 +47,7 @@ services:
             - INFLUX=influx:8086
 
     jmserver:
-        image: "tw-ucp2.twlon.com/admin/scale_jmserver"
+        image: "tw-ucp2.twlon.com/admin/scale_jmserver:latest"
         configs:
             - source: jmserver
               target: /jmeter/apache-jmeter-3.3/lib/jmeter-plugins-casutg-2.1.jar
@@ -53,7 +55,7 @@ services:
             - demo
             
     jmmaster:
-        image: "tw-ucp2.twlon.com/admin/scale_jmmaster"
+        image: "tw-ucp2.twlon.com/admin/scale_jmmaster:latest"
         ports:
             - "3007:3007"
         volumes:
@@ -61,6 +63,8 @@ services:
         configs:
             - source: jmserver
               target: /jmeter/apache-jmeter-3.3/lib/jmeter-plugins-casutg-2.1.jar
+            - source: tests
+              target: /etc/tests/loadtest.jmx
         tty: true
         networks:
              - demo
@@ -74,7 +78,10 @@ configs:
             
     jmserver:
         file: ./JMeter_Docker/plugins/jmeter-plugins-casutg-2.1.jar
-
+        
+    tests:
+        file: ./JMeter_Docker/tests/loadtest.jmx
+        
 volumes:
     influxdata:
     grafanadata:

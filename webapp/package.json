@@ -33,6 +33,7 @@
     "react-router-dom": "^4.2.2",
     "react-scroll": "^1.5.4",
     "react-siema": "^1.0.1",
+    "requestify": "^0.2.5",
     "rxjs": "^5.4.3",
     "siema": "^1.4.6",
     "spdy": "^3.4.7",

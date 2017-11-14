@@ -8,7 +8,7 @@
 
 const express = require('express');
 const router = express.Router();
-
+const test = require('./test');
 const log4js = require('log4js');
 
 
@@ -64,6 +64,9 @@ router.get('/companies/:companyId', async (req, res) => {
   }
 
 });
+
+router.route('/test').post(test.startTest)
+      .get(test.isTestStarted);
 
 
 module.exports = router;

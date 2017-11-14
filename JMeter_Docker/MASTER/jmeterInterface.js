@@ -23,7 +23,7 @@ var query;
 exports.isTestStarted = function (req, res) {
     console.log(started);
     res.status(200).send(started);
-}
+};
 
 /**
  * TODO QUERY.kill() not working yet
@@ -37,7 +37,7 @@ exports.stopProcess = async function (req,res) {
         res.status(200).send("Process killed");
     }else res.status(304).send("No Process to be killed");
 
-}
+};
 
 /**
  * Starts test
@@ -86,4 +86,4 @@ exports.startTest = function (req, res) {
         }
 
     }
-}
+};

@@ -10,6 +10,7 @@ const path = require('path');
 const http = require('http');
 const bodyParser = require('body-parser');
 const log4js = require('log4js');
+const fs = require('fs');
 
 const jmeterInterface = require('./jmeterInterface');
 
@@ -17,6 +18,8 @@ const config = require('./config');
 
 log4js.configure(config.log);
 const logger = log4js.getLogger('datalog', 'console');
+
+
 
 process.on('uncaughtException', (err) => {
  logger.error(err);
@@ -42,6 +45,7 @@ app.get('*', (req, res) => {
 });
 
 
+//Create Server
 const server = http.createServer(app);
 server.listen(port, () => logger.info(`API running on masterServer on Port: ${port}`));
 server.on('error', (err) => {

@@ -19,6 +19,7 @@ export const POLLING_TIME = config.polling;
  */
 export function fetchCompanyNames() {
   let url = (env == 'development' ? "https://" + config.server.host + ":" + config.server.port + "/" : "") + "api/companies/names";
+
   axios.get(url)
     .then(response => {
       companyNames = response.data;
@@ -137,7 +138,8 @@ export function sendValue(listener, symbol, value) {
  */
 export async function testIsStarted() {
   try {
-    let path = `http://${config.test.host}:${config.test.port}/startScript`;
+    let path = (env == 'development' ? "https://" + config.server.host + ":" + config.server.port: "") + "/api/test";
+    console.log(path);
     let response = await axios.get(path, {
       validateStatus: function (status) {
         return status < 500; // Reject only if the status code is greater than or equal to 500
@@ -157,9 +159,9 @@ export async function testIsStarted() {
 export async function startTests() {
   try {
     if (await testIsStarted()) {
-      let path = `https://${config.jmmaster.host}:${config.jmmaster.port}/startScript`;
+      let path = (env == 'development' ? "https://" + config.server.host + ":" + config.server.port  : "") + "/" +"api/test";
       console.log(path);
-      let response = await axios.post(path, {"filename": config.jmmaster.tests[0]},{validateStatus: function (status) {
+      let response = await axios.post(path,{validateStatus: function (status) {
         return status < 500; // Reject only if the status code is greater than or equal to 500
       }});
       dispatcher.dispatch(
